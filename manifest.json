@@ -1,0 +1,17 @@
+{
+  "name": "Финансы — личная хроника",
+  "short_name": "Финансы",
+  "description": "Личная финансовая хроника",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f2ede4",
+  "theme_color": "#f2ede4",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

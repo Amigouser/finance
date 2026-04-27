@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#f2ede4"/>
+  <rect x="7" y="7" width="178" height="178" fill="none" stroke="#d6cfbf" stroke-width="2"/>
+  <text x="96" y="134" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic" font-size="116" font-weight="400"
+        fill="#a8321f">Ф</text>
+</svg>

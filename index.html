@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#f2ede4" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Финансы" />
 <title>Финансы — личная финансовая хроника</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1076,6 +1081,93 @@ footer .ornament::before {
   .trend .bar { width: 12px; }
 }
 
+/* ─── Insights ────────────────────────────────────── */
+.insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.insight-card {
+  background: var(--paper-2);
+  padding: 24px 26px 22px;
+  position: relative;
+  transition: background .15s;
+}
+.insight-card:hover { background: var(--paper); }
+.insight-signal {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.insight-value {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  font-weight: 400;
+  font-size: clamp(24px, 2.8vw, 34px);
+  letter-spacing: -.015em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.insight-value.bad  { color: var(--oxblood); }
+.insight-value.good { color: var(--moss); }
+.insight-desc {
+  margin-top: 8px;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.insight-delta {
+  position: absolute;
+  top: 14px; right: 18px;
+  font: 500 18px/1 'Fraunces', serif;
+  color: var(--rule-strong);
+}
+@media (max-width: 680px) {
+  .insights { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 420px) {
+  .insights { grid-template-columns: 1fr; }
+}
+
+/* ─── Export row ──────────────────────────────────── */
+.export-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.export-row button {
+  appearance: none;
+  background: transparent;
+  border: 1px dotted var(--rule-strong);
+  padding: 6px 12px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.export-row button:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ─── Spark label ─────────────────────────────────── */
+.spark-label {
+  font: 500 9px/1 'JetBrains Mono', monospace;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 7px;
+  text-align: right;
+}
+
 /* ─── Edit mode banner ────────────────────────────── */
 .edit-banner {
   display: none;
@@ -1119,6 +1211,7 @@ footer .ornament::before {
     <div class="subbar">
       <nav>
         <a href="#balance">Баланс</a>
+        <a href="#insights">Инсайты</a>
         <a href="#compose">Запись</a>
         <a href="#trend">Тренд</a>
         <a href="#import">Импорт</a>
@@ -1147,6 +1240,7 @@ footer .ornament::before {
           <path id="sparkPath" d="" fill="none" stroke="#14233b" stroke-width="1.4" />
           <path id="sparkFill" d="" fill="rgba(20,35,59,.08)" />
         </svg>
+        <div class="spark-label" id="sparkLabel"></div>
       </aside>
     </div>
   </section>
@@ -1172,6 +1266,16 @@ footer .ornament::before {
         <div class="stat-foot" id="avgFoot">по текущему месяцу</div>
       </div>
     </div>
+  </section>
+
+  <section class="wrap section" id="insights">
+    <div class="section-head">
+      <span class="num" style="color:var(--gilt)">✦</span>
+      <h2>Инсайты <em>месяца</em></h2>
+      <div class="rule"></div>
+      <span class="stamp" id="insightsStamp">—</span>
+    </div>
+    <div class="insights" id="insightsList"></div>
   </section>
 
   <section class="wrap section" id="compose">
@@ -1255,16 +1359,6 @@ footer .ornament::before {
         </div>
         <div class="import-status" id="importStatus"></div>
       </div>
-      <aside class="import-help">
-        <h4>Как пользоваться</h4>
-        <p>Сфотографируйте чек, отправьте нейросети с готовым промптом (кнопка слева кладёт его в буфер). В ответ — JSON-массив. Вставьте в поле и нажмите «Импортировать».</p>
-        <h4 style="margin-top:18px;">Минимальный формат</h4>
-<pre>{
-  "name": "что купили",
-  "amount": 75
-}</pre>
-        <p style="margin-top:10px;">Необязательные поля: <b style="font-style:normal;font-family:'JetBrains Mono',monospace;font-size:11px;">category, date, type, note</b>. По умолчанию — <em>Другое</em>, сегодня, расход.</p>
-      </aside>
     </div>
   </section>
 
@@ -1287,6 +1381,10 @@ footer .ornament::before {
       </div>
     </div>
     <div class="cat-filter" id="catFilter"></div>
+    <div class="export-row">
+      <button id="exportCsv">Скачать CSV</button>
+      <button id="exportJson">Скачать JSON</button>
+    </div>
 
     <div class="ledger">
       <div id="entries"></div>
@@ -1586,6 +1684,7 @@ $('#entryForm').addEventListener('submit', async (e) => {
 function render() {
   paintHeader();
   paintBalance();
+  paintInsights();
   paintTrend();
   paintCatFilter();
   paintEntries();
@@ -1656,6 +1755,7 @@ function paintBalance() {
   $('#sparkPath').setAttribute('d', path);
   $('#sparkFill').setAttribute('d', path + ` L${W},${H} L0,${H} Z`);
   $('#sparkPath').setAttribute('stroke', balance < 0 ? '#a8321f' : '#14233b');
+  $('#sparkLabel').textContent = `${months[now.getMonth()]} ${now.getFullYear()} · нарастающим итогом`;
 }
 
 function paintEntries() {
@@ -1774,8 +1874,19 @@ function paintTrend() {
 
 function paintCatFilter() {
   const wrap = $('#catFilter');
+  const now = new Date();
+  const f = state.filter;
+  const periodTx = state.transactions.filter(t => {
+    if (f.period === 'month' && !sameMonth(t.date, now)) return false;
+    if (f.period === 'year') {
+      const d = new Date(t.date + 'T00:00:00');
+      if (d.getFullYear() !== now.getFullYear()) return false;
+    }
+    return true;
+  });
   const usedCats = new Set();
-  for (const t of state.transactions) usedCats.add(t.category);
+  for (const t of periodTx) usedCats.add(t.category);
+  if (f.category && !usedCats.has(f.category)) state.filter.category = '';
   const cats = [...usedCats].sort();
   if (!cats.length) { wrap.innerHTML = ''; return; }
   const active = state.filter.category;
@@ -1953,6 +2064,162 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
 
+// ── Insights ──
+function paintInsights() {
+  const now = new Date();
+  const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const sameMonthAs = (iso, ref) => {
+    const d = new Date(iso + 'T00:00:00');
+    return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
+  };
+
+  const thisTx  = state.transactions.filter(t => sameMonthAs(t.date, now));
+  const prevTx  = state.transactions.filter(t => sameMonthAs(t.date, prevMonthDate));
+  const thisExp = thisTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  const prevExp = prevTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  const thisInc = thisTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+
+  const el = $('#insightsList');
+  $('#insightsStamp').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  if (!thisTx.length && !prevTx.length) {
+    el.innerHTML = '<div class="insight-card"><div class="insight-desc">Добавьте несколько записей — тогда появятся инсайты.</div></div>';
+    return;
+  }
+
+  const cards = [];
+
+  // 1. Динамика расходов vs прошлый месяц
+  if (prevExp > 0 || thisExp > 0) {
+    const diff = thisExp - prevExp;
+    const pct  = prevExp > 0 ? Math.round((diff / prevExp) * 100) : null;
+    const sign = diff >= 0 ? '+' : '−';
+    cards.push({
+      signal: 'к прошлому месяцу',
+      value:  pct !== null ? `${diff >= 0 ? '+' : ''}${pct}%` : '— %',
+      cls:    diff > 0 ? 'bad' : diff < 0 ? 'good' : '',
+      desc:   `расходы ${diff >= 0 ? 'выросли' : 'упали'} на ${fmtRub.format(Math.abs(diff))}`,
+      arrow:  diff > 0 ? '↑' : diff < 0 ? '↓' : '→'
+    });
+  }
+
+  // 2. Самая растущая категория
+  {
+    const thisCats = {}, prevCats = {};
+    for (const t of thisTx.filter(t => t.type === 'expense'))
+      thisCats[t.category] = (thisCats[t.category] || 0) + t.amount;
+    for (const t of prevTx.filter(t => t.type === 'expense'))
+      prevCats[t.category] = (prevCats[t.category] || 0) + t.amount;
+    let topCat = null, topDiff = 0;
+    for (const cat of Object.keys(thisCats)) {
+      const d = thisCats[cat] - (prevCats[cat] || 0);
+      if (d > topDiff) { topDiff = d; topCat = cat; }
+    }
+    if (topCat && topDiff > 0) {
+      cards.push({
+        signal: 'главный рост',
+        value:  topCat,
+        cls:    'bad',
+        desc:   `+${fmtRub.format(topDiff)} к прошлому месяцу`,
+        arrow:  '↑'
+      });
+    }
+  }
+
+  // 3. Самый дорогой день недели
+  {
+    const dayTotals = new Array(7).fill(0), dayCounts = new Array(7).fill(0);
+    for (const t of thisTx.filter(t => t.type === 'expense')) {
+      const d = new Date(t.date + 'T00:00:00').getDay();
+      dayTotals[d] += t.amount; dayCounts[d]++;
+    }
+    const dayAvgs = dayTotals.map((v, i) => dayCounts[i] ? v / dayCounts[i] : 0);
+    const maxDay  = dayAvgs.indexOf(Math.max(...dayAvgs));
+    if (dayAvgs[maxDay] > 0) {
+      cards.push({
+        signal: 'самый дорогой день',
+        value:  weekdays[maxDay],
+        cls:    '',
+        desc:   `${fmtRub.format(Math.round(dayAvgs[maxDay]))} в среднем за ${weekdays[maxDay]}`,
+        arrow:  '☉'
+      });
+    }
+  }
+
+  // 4. Прогноз расходов на конец месяца
+  {
+    const day = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    if (day >= 3 && thisExp > 0) {
+      const projected   = (thisExp / day) * daysInMonth;
+      const projBalance = thisInc - projected;
+      cards.push({
+        signal: 'прогноз на конец месяца',
+        value:  fmtRub.format(Math.round(projected)),
+        cls:    projBalance < 0 ? 'bad' : '',
+        desc:   `баланс ${projBalance >= 0 ? '+' : ''}${fmtRub.format(Math.round(projBalance))} · при текущем темпе`,
+        arrow:  '⌖'
+      });
+    }
+  }
+
+  // 5. Самый крупный разовый расход
+  {
+    const maxTx = thisTx.filter(t => t.type === 'expense').sort((a,b) => b.amount - a.amount)[0];
+    if (maxTx) {
+      cards.push({
+        signal: 'крупнейший расход',
+        value:  fmtRub.format(maxTx.amount),
+        cls:    '',
+        desc:   `${maxTx.name} · ${maxTx.category}`,
+        arrow:  '◈'
+      });
+    }
+  }
+
+  el.innerHTML = cards.map(c => `
+    <div class="insight-card">
+      <div class="insight-delta">${c.arrow}</div>
+      <div class="insight-signal">${escapeHtml(c.signal)}</div>
+      <div class="insight-value ${c.cls}">${escapeHtml(c.value)}</div>
+      <div class="insight-desc">${escapeHtml(c.desc)}</div>
+    </div>
+  `).join('');
+}
+
+// ── Export ──
+function downloadFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+$('#exportJson').addEventListener('click', () => {
+  if (!state.transactions.length) { toast('Нет данных для экспорта'); return; }
+  downloadFile(JSON.stringify(state.transactions, null, 2), `kapital-${todayISO()}.json`, 'application/json');
+  toast('JSON скачан');
+});
+
+$('#exportCsv').addEventListener('click', () => {
+  if (!state.transactions.length) { toast('Нет данных для экспорта'); return; }
+  const headers = ['id', 'type', 'name', 'category', 'amount', 'date', 'note'];
+  const rows = [headers.join(',')];
+  for (const t of state.transactions) {
+    rows.push(headers.map(h => {
+      const v = t[h] ?? '';
+      const s = String(v).replace(/"/g, '""');
+      return /[,"\n]/.test(s) ? `"${s}"` : s;
+    }).join(','));
+  }
+  downloadFile('﻿' + rows.join('\r\n'), `kapital-${todayISO()}.csv`, 'text/csv;charset=utf-8');
+  toast('CSV скачан');
+});
+
 // ── Boot ──
 async function boot() {
   $('#date').value = todayISO();
@@ -1983,6 +2250,10 @@ setTimeout(() => {
   paintHeader();
   setInterval(() => { paintHeader(); }, 60 * 60 * 1000);
 }, (60 - new Date().getSeconds()) * 1000);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
 
 })();
 </script>
