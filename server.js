@@ -172,6 +172,16 @@ app.post('/api/transactions/bulk', auth, (req, res) => {
   res.json({ inserted: inserted.length, rejected: rejected.length, items: inserted, errors: rejected });
 });
 
+app.put('/api/transactions/:id', auth, (req, res) => {
+  const existing = db.prepare('SELECT * FROM transactions WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'not found' });
+  const tx = validateTx({ ...req.body, id: existing.id, ts: existing.ts });
+  if (!tx) return res.status(400).json({ error: 'invalid transaction' });
+  db.prepare('UPDATE transactions SET type=?, name=?, category=?, amount=?, date=?, note=? WHERE id=?')
+    .run(tx.type, tx.name, tx.category, tx.amount, tx.date, tx.note, tx.id);
+  res.json(tx);
+});
+
 app.delete('/api/transactions/:id', auth, (req, res) => {
   const r = db.prepare('DELETE FROM transactions WHERE id = ?').run(req.params.id);
   res.json({ ok: true, deleted: r.changes });

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#f2ede4" />
-<title>Капиталъ — личная финансовая хроника</title>
+<title>Финансы — личная финансовая хроника</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -25,9 +25,27 @@
   --grain-opacity: .06;
 }
 
-@media (prefers-color-scheme: dark) {
-  /* keep editorial cream — design intentionally print-warm */
+[data-theme="dark"] {
+  --paper: #14110c;
+  --paper-2: #1d1a13;
+  --rule: #34302a;
+  --rule-strong: #4a4538;
+  --ink: #ece4d0;
+  --ink-soft: #c8c0aa;
+  --muted: #8a8270;
+  --oxblood: #d96952;
+  --oxblood-soft: #e88671;
+  --moss: #6fa57e;
+  --gilt: #d4a655;
+  --grain-opacity: .12;
 }
+[data-theme="dark"] .field select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 5 4-5' fill='none' stroke='%23ece4d0' stroke-width='1.4'/></svg>");
+}
+[data-theme="dark"] .balance-card::before,
+[data-theme="dark"] .login-card::before { border-color: var(--rule-strong); }
+[data-theme="dark"] body::before { mix-blend-mode: screen; }
+[data-theme="dark"] footer .ornament::before { background: var(--paper); }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -228,6 +246,15 @@ main, header, footer { position: relative; z-index: 2; }
 @media (max-width: 880px) {
   .hero { grid-template-columns: 1fr; gap: 28px; padding: 36px 0 28px; }
 }
+.hero--solo {
+  grid-template-columns: 1fr;
+  padding: 40px 0 32px;
+}
+.hero--solo .balance-card {
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
 
 /* ─── Stats trio ──────────────────────────────────── */
 .stats {
@@ -330,9 +357,10 @@ main, header, footer { position: relative; z-index: 2; }
 /* ─── Add form ────────────────────────────────────── */
 .compose {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: 1fr;
   gap: 36px;
   align-items: start;
+  max-width: 720px;
 }
 .compose .aside {
   font-family: 'Instrument Serif', serif;
@@ -450,92 +478,6 @@ button.submit:active { transform: translateY(1px); }
   form.compose-form { grid-template-columns: 1fr; }
 }
 
-/* ─── Salary card ─────────────────────────────────── */
-.salary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px;
-  background: var(--paper-2);
-  border: 1px solid var(--rule);
-  padding: 28px 32px;
-  position: relative;
-}
-.salary::after {
-  content: "";
-  position: absolute;
-  top: 18px; right: 18px; bottom: 18px;
-  border-right: 1px solid var(--rule);
-}
-.salary h3 {
-  font-family: 'Fraunces', serif;
-  font-variation-settings: "opsz" 144;
-  font-weight: 400;
-  font-size: 24px;
-  margin: 0 0 14px;
-  letter-spacing: -.01em;
-}
-.salary .row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px dotted var(--rule-strong);
-  gap: 12px;
-}
-.salary .row:last-of-type { border-bottom: none; }
-.salary .row span:first-child {
-  font-family: 'Instrument Serif', serif;
-  font-style: italic;
-  color: var(--ink-soft);
-}
-.salary .row span:last-child {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  letter-spacing: .04em;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.salary input.amount {
-  width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--ink);
-  padding: 6px 0;
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  font-variant-numeric: tabular-nums;
-  outline: none;
-  color: var(--ink);
-}
-.salary .ctas {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-.salary button {
-  appearance: none;
-  border: 1px solid var(--ink);
-  background: transparent;
-  color: var(--ink);
-  padding: 10px 16px;
-  font: 500 10px/1 'JetBrains Mono', monospace;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-}
-.salary button.primary {
-  background: var(--moss);
-  border-color: var(--moss);
-  color: var(--paper);
-}
-.salary button:hover { background: var(--ink); color: var(--paper); }
-.salary button.primary:hover { background: var(--ink); border-color: var(--ink); }
-@media (max-width: 760px) {
-  .salary { grid-template-columns: 1fr; gap: 18px; padding: 22px; }
-  .salary::after { display: none; }
-}
 
 /* ─── Ledger ──────────────────────────────────────── */
 .ledger { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; align-items: start; }
@@ -824,6 +766,7 @@ footer .ornament::before {
   z-index: 100;
   padding: 24px;
 }
+.login-overlay[hidden] { display: none !important; }
 .login-overlay::before {
   content: "";
   position: absolute; inset: 0;
@@ -949,6 +892,219 @@ footer .ornament::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 .entry { animation: appear .35s ease both; }
+
+/* ─── Theme toggle ────────────────────────────────── */
+.theme-toggle {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-soft);
+  padding: 6px 10px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.theme-toggle:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* ─── Ledger filters ──────────────────────────────── */
+.ledger-filters {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.ledger-filters .search {
+  position: relative;
+}
+.ledger-filters .search input {
+  width: 100%;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-strong);
+  padding: 10px 14px 10px 36px;
+  font: 400 14px/1.2 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.ledger-filters .search input:focus { border-color: var(--oxblood); }
+.ledger-filters .search::before {
+  content: "⌕";
+  position: absolute;
+  left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 18px;
+  pointer-events: none;
+}
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: 1px solid var(--rule-strong);
+}
+.chips button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule-strong);
+  padding: 8px 14px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.chips button:last-child { border-right: none; }
+.chips button.active { background: var(--ink); color: var(--paper); }
+.chips button:hover:not(.active) { background: var(--paper-2); }
+.cat-filter {
+  margin-top: 12px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cat-filter button {
+  appearance: none;
+  background: transparent;
+  border: 1px dotted var(--rule-strong);
+  padding: 5px 10px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.cat-filter button.active {
+  background: var(--oxblood);
+  border-color: var(--oxblood);
+  color: var(--paper);
+}
+.cat-filter button:hover:not(.active) {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+@media (max-width: 760px) {
+  .ledger-filters { grid-template-columns: 1fr; }
+}
+
+/* ─── Trend chart ─────────────────────────────────── */
+.trend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 2px;
+  align-items: end;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 24px 28px 16px;
+  min-height: 200px;
+  position: relative;
+}
+.trend .col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+  position: relative;
+}
+.trend .bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 130px;
+  width: 100%;
+  justify-content: center;
+}
+.trend .bar {
+  width: 16px;
+  min-height: 1px;
+  background: var(--oxblood);
+  position: relative;
+  transition: filter .15s;
+}
+.trend .bar.income { background: var(--moss); }
+.trend .bar:hover { filter: brightness(1.15); }
+.trend .col.current .bar { box-shadow: 0 0 0 1px var(--ink); }
+.trend .month-label {
+  font: 500 9px/1.3 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+.trend .month-label.current { color: var(--ink); font-weight: 600; }
+.trend .amount-label {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: -.005em;
+}
+.trend .col.current .amount-label { color: var(--oxblood); }
+.trend-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.trend-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.trend-legend .sw { width: 10px; height: 10px; }
+.trend-legend .sw.exp { background: var(--oxblood); }
+.trend-legend .sw.inc { background: var(--moss); }
+.trend-empty {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--muted);
+  text-align: center;
+  padding: 30px 0;
+  font-size: 16px;
+}
+@media (max-width: 760px) {
+  .trend { padding: 18px 14px 12px; }
+  .trend .bar { width: 12px; }
+}
+
+/* ─── Edit mode banner ────────────────────────────── */
+.edit-banner {
+  display: none;
+  background: var(--gilt);
+  color: var(--paper);
+  padding: 10px 16px;
+  font: 500 10px/1.2 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.edit-banner.on { display: flex; }
+.edit-banner button {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--paper);
+  color: var(--paper);
+  padding: 5px 10px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.edit-banner button:hover { background: var(--paper); color: var(--ink); }
+.entry { cursor: pointer; }
+.entry .body { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -957,36 +1113,29 @@ footer .ornament::before {
   <div class="wrap">
     <div class="masthead-row">
       <div class="masthead-meta" id="issueLabel">Том&nbsp;I · Выпуск&nbsp;—</div>
-      <h1 class="brand">Капитал<span class="yat">ъ</span></h1>
+      <h1 class="brand">Финанс<span class="yat">ы</span></h1>
       <div class="masthead-meta right" id="dateLabel">—</div>
     </div>
     <div class="subbar">
       <nav>
         <a href="#balance">Баланс</a>
         <a href="#compose">Запись</a>
-        <a href="#salary">Жалованье</a>
+        <a href="#trend">Тренд</a>
         <a href="#import">Импорт</a>
         <a href="#ledger">Хроника</a>
         <a href="#cats">Структура</a>
       </nav>
-      <span>Личная финансовая хроника</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span>Личная финансовая хроника</span>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" title="Сменить тему">☾</button>
+      </div>
     </div>
   </div>
 </header>
 
 <main>
   <section class="wrap" id="balance">
-    <div class="hero">
-      <div>
-        <h2 class="hero-headline">
-          Каждая копейка<br>
-          <em>имеет</em> историю.
-        </h2>
-        <p class="hero-lede">
-          Тихое искусство приумножения начинается с честной хроники: от пачки сигарет до квартирной платы — всё на одной странице. Эта тетрадь живёт на вашем сервере и принадлежит только вам.
-        </p>
-      </div>
-
+    <div class="hero hero--solo">
       <aside class="balance-card">
         <div class="label">На балансе</div>
         <div class="month" id="monthLabel">—</div>
@@ -1030,11 +1179,15 @@ footer .ornament::before {
       <span class="num">№ 01</span>
       <h2>Новая <em>запись</em></h2>
       <div class="rule"></div>
-      <span class="stamp">Compose</span>
+      <span class="stamp" id="composeStamp">Compose</span>
     </div>
 
     <div class="compose">
       <div>
+        <div class="edit-banner" id="editBanner">
+          <span id="editBannerText">Редактирование записи</span>
+          <button type="button" id="cancelEdit">Отменить</button>
+        </div>
         <div class="toggle" role="tablist" aria-label="Тип записи">
           <button type="button" class="active expense" data-type="expense">Расход</button>
           <button type="button" data-type="income">Доход</button>
@@ -1061,39 +1214,20 @@ footer .ornament::before {
           </div>
         </form>
       </div>
-      <div class="aside">
-        <b>Заметка редактора</b>
-        Записывайте без оглядки. Нет «слишком мелких» трат — именно из них складывается портрет месяца. Сигарета — это запись. Чашка кофе — это запись. Хлеб — это запись.
-      </div>
     </div>
   </section>
 
-  <section class="wrap section" id="salary">
+  <section class="wrap section" id="trend">
     <div class="section-head">
       <span class="num">№ 02</span>
-      <h2>Жалованье</h2>
+      <h2>Тренд <em>по месяцам</em></h2>
       <div class="rule"></div>
-      <span class="stamp" id="payStamp">Расчётные дни · 15 / 30</span>
+      <span class="stamp" id="trendStamp">Последние 6 месяцев</span>
     </div>
-
-    <div class="salary">
-      <div>
-        <h3>Размер выплаты</h3>
-        <input class="amount" id="salaryInput" inputmode="decimal" placeholder="0" />
-        <div class="row"><span>Зачисление</span><span>15-го и 30-го числа</span></div>
-        <div class="row"><span>Половин в месяц</span><span id="halvesNote">— / 2</span></div>
-        <div class="ctas">
-          <button id="saveSalary">Сохранить размер</button>
-          <button class="primary" id="addSalary">Зачислить сейчас</button>
-        </div>
-      </div>
-      <div>
-        <h3>Расписание</h3>
-        <div class="row"><span>Ближайшая выплата</span><span id="nextPay">—</span></div>
-        <div class="row"><span>Через</span><span id="daysToPay">—</span></div>
-        <div class="row"><span>Получено в этом месяце</span><span id="receivedMonth">0&nbsp;₽</span></div>
-        <div class="row"><span>Всего за всё время</span><span id="receivedAll">0&nbsp;₽</span></div>
-      </div>
+    <div class="trend" id="trendChart"></div>
+    <div class="trend-legend">
+      <span><span class="sw exp"></span>Расход</span>
+      <span><span class="sw inc"></span>Доход</span>
     </div>
   </section>
 
@@ -1142,6 +1276,18 @@ footer .ornament::before {
       <span class="stamp" id="ledgerStamp">Все записи · 0</span>
     </div>
 
+    <div class="ledger-filters">
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Поиск по названию или категории…" autocomplete="off" />
+      </div>
+      <div class="chips" id="periodChips" role="group" aria-label="Период">
+        <button type="button" data-period="month" class="active">Месяц</button>
+        <button type="button" data-period="year">Год</button>
+        <button type="button" data-period="all">Всё время</button>
+      </div>
+    </div>
+    <div class="cat-filter" id="catFilter"></div>
+
     <div class="ledger">
       <div id="entries"></div>
 
@@ -1157,7 +1303,6 @@ footer .ornament::before {
 
 <footer>
   <div class="ornament"></div>
-  <div>Печатается для вас одного. Хранится на вашем сервере.</div>
   <div style="margin-top:6px;"><a href="#" id="logoutLink" style="color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--rule-strong);">выйти</a></div>
   <div style="font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.22em;margin-top:10px;color:var(--rule-strong);text-transform:uppercase;">
     MMXXVI · Anno · Personalis
@@ -1166,11 +1311,11 @@ footer .ornament::before {
 
 <div class="login-overlay" id="loginOverlay" hidden>
   <div class="login-card">
-    <h2 class="brand-mini">Капитал<span class="yat">ъ</span></h2>
+    <h2 class="brand-mini">Финанс<span class="yat">ы</span></h2>
     <div class="sub">Вход в личную хронику</div>
     <form id="loginForm" autocomplete="off">
       <label for="loginToken">Токен доступа</label>
-      <input id="loginToken" type="password" autocomplete="current-password" required spellcheck="false" />
+      <input id="loginToken" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" required spellcheck="false" data-1p-ignore data-lpignore="true" />
       <button type="submit">Войти</button>
       <div class="err" id="loginErr"></div>
     </form>
@@ -1186,7 +1331,12 @@ footer .ornament::before {
 
 const TOKEN_KEY = 'kapital.token';
 const fmt = new Intl.NumberFormat('ru-RU');
-const fmtRub = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+const fmtRubInt = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+const fmtRubKop = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtRub = { format(n) {
+  const v = Number(n) || 0;
+  return Math.abs(v - Math.round(v)) > 0.005 ? fmtRubKop.format(v) : fmtRubInt.format(v);
+}};
 const months = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
 const monthsGen = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const weekdays = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
@@ -1197,7 +1347,8 @@ const incomeCats  = ['Зарплата','Подработка','Подарок',
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => document.querySelectorAll(q);
 
-const state = { transactions: [], salary: 0, ready: false };
+const state = { transactions: [], ready: false, filter: { q: '', period: 'month', category: '' } };
+let editingId = null;
 let token = localStorage.getItem(TOKEN_KEY) || '';
 
 // ── API client ──
@@ -1252,6 +1403,41 @@ $('#logoutLink').addEventListener('click', (e) => {
   localStorage.removeItem(TOKEN_KEY);
   token = '';
   showLogin();
+});
+
+// ── Theme ──
+const THEME_KEY = 'kapital.theme';
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  $('#themeToggle').textContent = t === 'dark' ? '☀' : '☾';
+  $('#themeToggle').title = t === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#14110c' : '#f2ede4');
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+$('#themeToggle').addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+});
+
+// ── Ledger filters ──
+let searchTimer;
+$('#searchInput').addEventListener('input', (e) => {
+  clearTimeout(searchTimer);
+  const v = e.target.value;
+  searchTimer = setTimeout(() => {
+    state.filter.q = v;
+    paintEntries();
+  }, 120);
+});
+document.querySelectorAll('#periodChips button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#periodChips button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.filter.period = btn.dataset.period;
+    paintEntries();
+  });
 });
 
 // ── Helpers ──
@@ -1325,6 +1511,44 @@ $('#amount').addEventListener('input', (e) => {
   e.target.value = v ? fmt.format(v) : cleaned;
 });
 
+function startEdit(tx) {
+  editingId = tx.id;
+  composeType = tx.type;
+  $$('.toggle button').forEach(b => b.classList.remove('active','expense','income'));
+  const tBtn = document.querySelector(`.toggle button[data-type="${tx.type}"]`);
+  if (tBtn) tBtn.classList.add('active', tx.type);
+  paintCategorySelect();
+  $('#name').value = tx.name;
+  $('#amount').value = fmt.format(tx.amount);
+  if (![...$('#category').options].some(o => o.value === tx.category)) {
+    const opt = document.createElement('option');
+    opt.value = tx.category; opt.textContent = tx.category;
+    $('#category').appendChild(opt);
+  }
+  $('#category').value = tx.category;
+  $('#date').value = tx.date;
+  $('#editBanner').classList.add('on');
+  $('#editBannerText').textContent = `Редактирование: ${tx.name}`;
+  $('#composeStamp').textContent = 'Edit';
+  document.querySelector('#entryForm .submit').textContent = 'Сохранить изменения';
+  document.getElementById('compose').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => $('#name').focus(), 300);
+}
+function cancelEdit() {
+  editingId = null;
+  $('#name').value = '';
+  $('#amount').value = '';
+  $('#date').value = todayISO();
+  composeType = 'expense';
+  $$('.toggle button').forEach(b => b.classList.remove('active','expense','income'));
+  document.querySelector('.toggle button[data-type="expense"]').classList.add('active','expense');
+  paintCategorySelect();
+  $('#editBanner').classList.remove('on');
+  $('#composeStamp').textContent = 'Compose';
+  document.querySelector('#entryForm .submit').textContent = 'Внести в хронику';
+}
+$('#cancelEdit').addEventListener('click', cancelEdit);
+
 $('#entryForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = $('#name').value.trim();
@@ -1333,86 +1557,58 @@ $('#entryForm').addEventListener('submit', async (e) => {
   const date = $('#date').value || todayISO();
   if (!name || !amount) { toast('Заполните название и сумму'); return; }
   try {
-    const tx = await api('/api/transactions', {
-      method: 'POST',
-      body: JSON.stringify({ type: composeType, name, category, amount, date })
-    });
-    state.transactions.unshift(tx);
-    render();
-    $('#name').value = '';
-    $('#amount').value = '';
-    $('#name').focus();
-    toast(composeType === 'expense' ? 'Расход внесён' : 'Доход зачислен');
-  } catch { toast('Ошибка сервера'); }
-});
-
-// ── Salary ──
-function nextPaydate(from = new Date()) {
-  const y = from.getFullYear(), m = from.getMonth(), d = from.getDate();
-  const fifteenth = new Date(y, m, 15);
-  const lastDay = new Date(y, m + 1, 0).getDate();
-  const thirtieth = new Date(y, m, Math.min(30, lastDay));
-  if (d < 15) return fifteenth;
-  if (d < Math.min(30, lastDay)) return thirtieth;
-  return new Date(y, m + 1, 15);
-}
-function paintSalary() {
-  if (document.activeElement !== $('#salaryInput')) {
-    $('#salaryInput').value = state.salary ? fmt.format(state.salary) : '';
-  }
-  $('#halvesNote').textContent = state.salary ? `${fmtRub.format(state.salary)} × 2` : '— / 2';
-  const np = nextPaydate();
-  $('#nextPay').textContent = `${np.getDate()} ${monthsGen[np.getMonth()]}`;
-  const days = Math.max(0, Math.ceil((np - new Date()) / 86400000));
-  $('#daysToPay').textContent = days === 0 ? 'сегодня' : days === 1 ? '1 день' : `${days} дн.`;
-  const now = new Date();
-  const incomeMonth = state.transactions
-    .filter(t => t.type === 'income' && t.category === 'Зарплата' && sameMonth(t.date, now))
-    .reduce((a, b) => a + b.amount, 0);
-  const incomeAll = state.transactions
-    .filter(t => t.type === 'income' && t.category === 'Зарплата')
-    .reduce((a, b) => a + b.amount, 0);
-  $('#receivedMonth').textContent = fmtRub.format(incomeMonth);
-  $('#receivedAll').textContent   = fmtRub.format(incomeAll);
-}
-$('#salaryInput').addEventListener('input', (e) => {
-  const v = parseAmount(e.target.value);
-  e.target.value = v ? fmt.format(v) : '';
-});
-$('#saveSalary').addEventListener('click', async () => {
-  const v = parseAmount($('#salaryInput').value);
-  try {
-    await api('/api/settings', { method: 'PUT', body: JSON.stringify({ salary: v }) });
-    state.salary = v;
-    paintSalary();
-    toast(v ? 'Размер выплаты сохранён' : 'Размер обнулён');
-  } catch { toast('Ошибка сохранения'); }
-});
-$('#addSalary').addEventListener('click', async () => {
-  const v = parseAmount($('#salaryInput').value) || state.salary;
-  if (!v) { toast('Сначала укажите размер'); return; }
-  try {
-    if (v !== state.salary) {
-      await api('/api/settings', { method: 'PUT', body: JSON.stringify({ salary: v }) });
-      state.salary = v;
+    if (editingId) {
+      const updated = await api(`/api/transactions/${encodeURIComponent(editingId)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ type: composeType, name, category, amount, date })
+      });
+      const idx = state.transactions.findIndex(t => t.id === editingId);
+      if (idx >= 0) state.transactions[idx] = updated;
+      cancelEdit();
+      render();
+      toast('Запись обновлена');
+    } else {
+      const tx = await api('/api/transactions', {
+        method: 'POST',
+        body: JSON.stringify({ type: composeType, name, category, amount, date })
+      });
+      state.transactions.unshift(tx);
+      render();
+      $('#name').value = '';
+      $('#amount').value = '';
+      $('#name').focus();
+      toast(composeType === 'expense' ? 'Расход внесён' : 'Доход зачислен');
     }
-    const tx = await api('/api/transactions', {
-      method: 'POST',
-      body: JSON.stringify({ type: 'income', name: 'Зарплата', category: 'Зарплата', amount: v, date: todayISO() })
-    });
-    state.transactions.unshift(tx);
-    render();
-    toast('Жалованье зачислено');
   } catch { toast('Ошибка сервера'); }
 });
 
 // ── Render ──
 function render() {
   paintHeader();
-  paintSalary();
   paintBalance();
+  paintTrend();
+  paintCatFilter();
   paintEntries();
   paintCategories();
+}
+
+function getFilteredTx() {
+  const now = new Date();
+  const f = state.filter;
+  const q = (f.q || '').trim().toLowerCase();
+  return state.transactions.filter(t => {
+    if (f.period === 'month' && !sameMonth(t.date, now)) return false;
+    if (f.period === 'year') {
+      const d = new Date(t.date + 'T00:00:00');
+      if (d.getFullYear() !== now.getFullYear()) return false;
+    }
+    if (f.category && t.category !== f.category) return false;
+    if (q) {
+      const hay = (t.name + ' ' + t.category + ' ' + (t.note || '')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
 }
 
 function paintBalance() {
@@ -1423,7 +1619,11 @@ function paintBalance() {
   const balance = income - expense;
 
   $('#balanceAmount').classList.toggle('neg', balance < 0);
-  $('#balanceValue').textContent = fmt.format(Math.abs(Math.round(balance))) + (balance < 0 ? ' —' : '');
+  const absBal = Math.abs(balance);
+  const balStr = Math.abs(absBal - Math.round(absBal)) > 0.005
+    ? absBal.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : fmt.format(Math.round(absBal));
+  $('#balanceValue').textContent = balStr + (balance < 0 ? ' —' : '');
 
   $('#incomeValue').textContent  = fmtRub.format(income);
   $('#expenseValue').textContent = fmtRub.format(expense);
@@ -1433,7 +1633,7 @@ function paintBalance() {
 
   const day = now.getDate();
   const avg = day > 0 ? expense / day : 0;
-  $('#avgValue').textContent = fmtRub.format(Math.round(avg));
+  $('#avgValue').textContent = fmtRub.format(avg);
 
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const series = new Array(daysInMonth).fill(0);
@@ -1459,14 +1659,20 @@ function paintBalance() {
 }
 
 function paintEntries() {
-  const list = [...state.transactions].sort((a,b) => {
+  const list = [...getFilteredTx()].sort((a,b) => {
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
     return (b.ts || 0) - (a.ts || 0);
   });
-  $('#ledgerStamp').textContent = `Все записи · ${list.length}`;
+  const total = state.transactions.length;
+  const f = state.filter;
+  const periodLabel = f.period === 'month' ? 'за месяц' : f.period === 'year' ? 'за год' : 'всего';
+  $('#ledgerStamp').textContent = `Записей: ${list.length} · ${periodLabel}${list.length !== total ? ` (из ${total})` : ''}`;
   const container = $('#entries');
   if (!list.length) {
-    container.innerHTML = '<div class="empty">Хроника пока пуста — внесите первую запись выше.</div>';
+    const empty = state.transactions.length
+      ? 'По заданным фильтрам ничего не найдено.'
+      : 'Хроника пока пуста — внесите первую запись выше.';
+    container.innerHTML = `<div class="empty">${empty}</div>`;
     return;
   }
   const groups = {};
@@ -1505,6 +1711,7 @@ function paintEntries() {
 
   container.querySelectorAll('.del').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       const id = e.target.closest('.entry').dataset.id;
       try {
         await api(`/api/transactions/${encodeURIComponent(id)}`, { method: 'DELETE' });
@@ -1512,6 +1719,73 @@ function paintEntries() {
         render();
         toast('Запись удалена');
       } catch { toast('Ошибка удаления'); }
+    });
+  });
+  container.querySelectorAll('.entry').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.del')) return;
+      const id = el.dataset.id;
+      const tx = state.transactions.find(t => t.id === id);
+      if (tx) startEdit(tx);
+    });
+  });
+}
+
+function paintTrend() {
+  const el = $('#trendChart');
+  const now = new Date();
+  const months6 = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months6.push({ year: d.getFullYear(), month: d.getMonth(), key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, expense: 0, income: 0 });
+  }
+  for (const t of state.transactions) {
+    const k = t.date.slice(0, 7);
+    const slot = months6.find(m => m.key === k);
+    if (!slot) continue;
+    if (t.type === 'expense') slot.expense += t.amount;
+    else slot.income += t.amount;
+  }
+  const max = Math.max(1, ...months6.map(m => Math.max(m.expense, m.income)));
+  const hasData = months6.some(m => m.expense || m.income);
+  if (!hasData) {
+    el.innerHTML = '<div class="trend-empty">Данных для тренда пока нет — добавьте записи.</div>';
+    return;
+  }
+  el.innerHTML = months6.map(m => {
+    const isCurrent = m.month === now.getMonth() && m.year === now.getFullYear();
+    const expH = (m.expense / max) * 100;
+    const incH = (m.income / max) * 100;
+    const label = months[m.month].slice(0, 3);
+    const yearTag = m.month === 0 || m === months6[0] ? `<div style="font:500 9px/1 'JetBrains Mono',monospace;letter-spacing:.18em;color:var(--rule-strong);">'${String(m.year).slice(2)}</div>` : '';
+    return `
+      <div class="col ${isCurrent ? 'current' : ''}">
+        <div class="amount-label" title="Расход / Доход">${fmtRubInt.format(m.expense)}</div>
+        <div class="bars">
+          ${m.expense ? `<div class="bar" style="height:${expH}%" title="Расход: ${fmtRub.format(m.expense)}"></div>` : ''}
+          ${m.income ? `<div class="bar income" style="height:${incH}%" title="Доход: ${fmtRub.format(m.income)}"></div>` : ''}
+        </div>
+        <div class="month-label ${isCurrent ? 'current' : ''}">${label}</div>
+        ${yearTag}
+      </div>
+    `;
+  }).join('');
+}
+
+function paintCatFilter() {
+  const wrap = $('#catFilter');
+  const usedCats = new Set();
+  for (const t of state.transactions) usedCats.add(t.category);
+  const cats = [...usedCats].sort();
+  if (!cats.length) { wrap.innerHTML = ''; return; }
+  const active = state.filter.category;
+  wrap.innerHTML = `<button data-cat="" class="${!active ? 'active' : ''}">Все</button>` +
+    cats.map(c => `<button data-cat="${escapeHtml(c)}" class="${active === c ? 'active' : ''}">${escapeHtml(c)}</button>`).join('');
+  wrap.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.filter.category = btn.dataset.cat;
+      paintCatFilter();
+      paintEntries();
     });
   });
 }
@@ -1545,6 +1819,30 @@ function extractItems(parsed) {
   if (parsed && typeof parsed === 'object' && parsed.name) return [parsed];
   return null;
 }
+function repairJson(text) {
+  let s = text;
+  // smart quotes -> straight
+  s = s.replace(/[“”„‟″]/g, '"').replace(/[‘’‚‛′]/g, "'");
+  // strip trailing commas before } or ]
+  s = s.replace(/,(\s*[}\]])/g, '$1');
+  // escape stray backslashes that aren't valid JSON escapes (\" \\ \/ \b \f \n \r \t \uXXXX)
+  s = s.replace(/\\(?!["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\');
+  // fix inner double quotes inside string values:
+  // pattern: : "text "inner" more" ,|}|]
+  // we replace inner pair " ... " with ' ... ' when between the outer quotes
+  const fixField = (str) => str.replace(
+    /(:\s*)"([^"\n]*)"([^"\n]*)"([^"\n]*)"(\s*[,}\]\n])/g,
+    (_, p, a, b, c, tail) => `${p}"${a}'${b}'${c}"${tail}`
+  );
+  // run a few times in case there are multiple bad fields per line
+  for (let i = 0; i < 4; i++) {
+    const next = fixField(s);
+    if (next === s) break;
+    s = next;
+  }
+  return s;
+}
+
 function tryParse(text) {
   text = text.trim();
   if (!text) return { ok: false, msg: 'Пусто' };
@@ -1556,7 +1854,25 @@ function tryParse(text) {
     if (!items) return { ok: false, msg: 'Ожидался массив объектов' };
     return { ok: true, items };
   } catch (e) {
-    return { ok: false, msg: 'Невалидный JSON: ' + e.message.slice(0, 80) };
+    // try auto-repair: smart quotes, trailing commas, inner double quotes
+    try {
+      const repaired = repairJson(text);
+      const p = JSON.parse(repaired);
+      const items = extractItems(p);
+      if (!items) return { ok: false, msg: 'Ожидался массив объектов' };
+      return { ok: true, items, repaired: true };
+    } catch (e2) {
+      const m = e2.message.match(/position (\d+)/);
+      let where = '';
+      if (m) {
+        const pos = Number(m[1]);
+        const before = text.slice(0, pos);
+        const line = before.split('\n').length;
+        const col = pos - before.lastIndexOf('\n');
+        where = ` (строка ${line}, символ ${col})`;
+      }
+      return { ok: false, msg: 'Невалидный JSON' + where + ': ' + e2.message.slice(0, 100) };
+    }
   }
 }
 
@@ -1570,7 +1886,8 @@ $('#importPreview').addEventListener('click', () => {
   const r = tryParse($('#importText').value);
   if (!r.ok) return setStatus(r.msg, 'err');
   const total = r.items.reduce((a, x) => a + (parseFloat(String(x.amount ?? x.sum ?? 0).replace(/\s/g,'').replace(',','.')) || 0), 0);
-  setStatus(`Найдено записей: ${r.items.length} · сумма ${fmtRub.format(total)}`, 'ok');
+  const prefix = r.repaired ? 'JSON починен · ' : '';
+  setStatus(`${prefix}Найдено записей: ${r.items.length} · сумма ${fmtRub.format(total)}`, 'ok');
 });
 
 $('#importGo').addEventListener('click', async () => {
@@ -1600,14 +1917,16 @@ $('#importFile').addEventListener('change', async (e) => {
 
 const PROMPT_TEMPLATE = `Распознай этот чек и верни ТОЛЬКО валидный JSON-массив без пояснений и без блоков кода.
 Каждая позиция чека — отдельный объект формата:
-{ "name": "название товара", "amount": число_рублей, "category": "одна из: Еда, Транспорт, Жильё, Сигареты, Развлечения, Здоровье, Одежда, Связь, Подарки, Другое", "date": "ГГГГ-ММ-ДД", "type": "expense" }
+{ "name": "название товара", "amount": число, "category": "одна из: Еда, Транспорт, Жильё, Сигареты, Развлечения, Здоровье, Одежда, Связь, Подарки, Другое", "date": "ГГГГ-ММ-ДД", "type": "expense" }
 
 Правила:
 - если на чеке указана дата — используй её, иначе сегодняшнюю
 - объединяй одинаковые позиции, в name указывай количество в скобках
-- округляй суммы до целых рублей
+- amount — число с копейками если есть (например 14.55), точка как разделитель, без кавычек, без знака рубля
 - если категория не очевидна — ставь "Другое"
-- никаких комментариев, только массив`;
+- ВАЖНО: внутри строки name НЕ используй двойные кавычки. Если нужно выделить часть названия — используй одинарные кавычки 'так' или « ёлочки »
+- НЕ используй обратный слэш \\ в name. Вместо «б/к» пиши «б к» или «без кости», вместо «1\\2» пиши «1 2»
+- никаких комментариев, только валидный JSON-массив`;
 
 $('#copyPrompt').addEventListener('click', async () => {
   try {
@@ -1640,12 +1959,7 @@ async function boot() {
   paintCategorySelect();
   paintHeader();
   try {
-    const [txs, settings] = await Promise.all([
-      api('/api/transactions'),
-      api('/api/settings')
-    ]);
-    state.transactions = txs;
-    state.salary = Number(settings.salary) || 0;
+    state.transactions = await api('/api/transactions');
     state.ready = true;
     render();
   } catch (e) {
@@ -1666,8 +1980,8 @@ async function init() {
 init();
 
 setTimeout(() => {
-  paintHeader(); paintSalary();
-  setInterval(() => { paintHeader(); paintSalary(); }, 60 * 60 * 1000);
+  paintHeader();
+  setInterval(() => { paintHeader(); }, 60 * 60 * 1000);
 }, (60 - new Date().getSeconds()) * 1000);
 
 })();
