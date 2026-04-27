@@ -1,0 +1,25 @@
+[Unit]
+Description=Капиталъ — личные финансы
+After=network.target
+
+[Service]
+Type=simple
+User=kapital
+Group=kapital
+WorkingDirectory=/opt/kapital
+EnvironmentFile=/opt/kapital/.env
+ExecStart=/usr/bin/node /opt/kapital/server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# песочница
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/kapital/data
+
+[Install]
+WantedBy=multi-user.target

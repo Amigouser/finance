@@ -1,0 +1,11 @@
+# Пример Caddy для домена с автоматическим HTTPS.
+# Положите на хост Proxmox (или в LXC с Caddy) и замените домен.
+
+kapital.example.com {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:3000
+
+    # необязательно: защита /api от перебора
+    @api path /api/*
+    rate_limit @api 60/1m
+}

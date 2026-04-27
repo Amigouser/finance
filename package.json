@@ -1,0 +1,17 @@
+{
+  "name": "kapital",
+  "version": "1.0.0",
+  "description": "Капиталъ — личная финансовая хроника",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}

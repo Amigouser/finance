@@ -1,0 +1,1676 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f2ede4" />
+<title>Капиталъ — личная финансовая хроника</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper: #f2ede4;
+  --paper-2: #ebe4d6;
+  --rule: #d6cfbf;
+  --rule-strong: #b9b09b;
+  --ink: #14233b;
+  --ink-soft: #2c3a52;
+  --muted: #8a8472;
+  --oxblood: #a8321f;
+  --oxblood-soft: #c1503c;
+  --moss: #2d5f3f;
+  --gilt: #b1873a;
+  --shadow: 0 1px 0 rgba(20,35,59,.06), 0 14px 28px -14px rgba(20,35,59,.16);
+  --grain-opacity: .06;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* keep editorial cream — design intentionally print-warm */
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Instrument Serif', 'Fraunces', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.55;
+  font-feature-settings: "liga", "dlig", "kern";
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* paper grain */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.13 0 0 0 0 0.23 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: var(--grain-opacity);
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+main, header, footer { position: relative; z-index: 2; }
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 36px;
+}
+@media (max-width: 680px) {
+  .wrap { padding: 0 18px; }
+  body { font-size: 16px; }
+}
+
+/* ─── Masthead ─────────────────────────────────────── */
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0 16px;
+}
+.masthead-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 16px;
+}
+.masthead-meta {
+  font: 500 11px/1.3 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.masthead-meta.right { text-align: right; }
+.brand {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  font-weight: 500;
+  font-size: clamp(34px, 6vw, 56px);
+  letter-spacing: -.01em;
+  line-height: .9;
+  text-align: center;
+  margin: 0;
+}
+.brand .yat {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  color: var(--oxblood);
+}
+.subbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 3px double var(--rule-strong);
+  margin-top: 14px;
+  font: 500 11px/1.3 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.subbar nav { display: flex; gap: 22px; flex-wrap: wrap; }
+.subbar a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color .2s, border-color .2s;
+}
+.subbar a:hover { color: var(--oxblood); border-bottom-color: var(--oxblood); }
+@media (max-width: 680px) {
+  .masthead-row { grid-template-columns: 1fr; text-align: center; }
+  .masthead-meta, .masthead-meta.right { text-align: center; }
+  .subbar { flex-direction: column; gap: 10px; align-items: flex-start; font-size: 10px; }
+  .subbar nav { gap: 14px; }
+}
+
+/* ─── Hero / balance ──────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 56px;
+  padding: 56px 0 36px;
+  border-bottom: 1px solid var(--rule);
+}
+.hero-headline {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+  font-weight: 350;
+  font-size: clamp(40px, 6.4vw, 84px);
+  line-height: .98;
+  letter-spacing: -.025em;
+  margin: 0 0 22px;
+  color: var(--ink);
+}
+.hero-headline em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--oxblood);
+}
+.hero-lede {
+  max-width: 38ch;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 0 28px;
+}
+.hero-lede::first-letter {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  float: left;
+  font-size: 4em;
+  line-height: .82;
+  padding: 6px 10px 0 0;
+  color: var(--oxblood);
+  font-weight: 600;
+}
+
+.balance-card {
+  align-self: start;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 28px 28px 32px;
+  position: relative;
+}
+.balance-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.balance-card .label {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.balance-card .month {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink-soft);
+  margin: 4px 0 14px;
+}
+.balance-amount {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+  font-weight: 400;
+  font-size: clamp(38px, 5.4vw, 60px);
+  line-height: 1;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.balance-amount .sym {
+  font-size: .55em;
+  color: var(--muted);
+  font-style: italic;
+}
+.balance-amount.neg { color: var(--oxblood); }
+.balance-spark {
+  margin-top: 18px;
+  height: 56px;
+  width: 100%;
+}
+@media (max-width: 880px) {
+  .hero { grid-template-columns: 1fr; gap: 28px; padding: 36px 0 28px; }
+}
+
+/* ─── Stats trio ──────────────────────────────────── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-bottom: 1px solid var(--rule);
+}
+.stat {
+  padding: 28px 28px 30px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.stat:last-child { border-right: none; }
+.stat-label {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.stat-value {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  font-weight: 400;
+  font-size: clamp(28px, 3.4vw, 38px);
+  letter-spacing: -.015em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+}
+.stat-value.income { color: var(--moss); }
+.stat-value.expense { color: var(--oxblood); }
+.stat-foot {
+  margin-top: 8px;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted);
+}
+.stat .corner {
+  position: absolute;
+  top: 14px; right: 18px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  color: var(--rule-strong);
+}
+@media (max-width: 760px) {
+  .stats { grid-template-columns: 1fr; }
+  .stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 22px 4px; }
+  .stat:last-child { border-bottom: none; }
+}
+
+/* ─── Section heading ─────────────────────────────── */
+.section {
+  padding: 56px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.section-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+.section-head .num {
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  color: var(--oxblood);
+}
+.section-head h2 {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+  font-weight: 400;
+  font-size: clamp(28px, 3.6vw, 42px);
+  letter-spacing: -.015em;
+  margin: 0;
+  line-height: 1;
+}
+.section-head h2 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--oxblood);
+}
+.section-head .rule {
+  height: 1px;
+  background: var(--rule-strong);
+  align-self: center;
+}
+.section-head .stamp {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  color: var(--muted);
+}
+@media (max-width: 680px) {
+  .section { padding: 36px 0; }
+  .section-head { grid-template-columns: 1fr; gap: 8px; }
+  .section-head .rule { display: none; }
+}
+
+/* ─── Add form ────────────────────────────────────── */
+.compose {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+.compose .aside {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--oxblood);
+  padding: 6px 0 6px 18px;
+}
+.compose .aside b {
+  display: block;
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .22em;
+  color: var(--oxblood);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-2);
+  margin-bottom: 18px;
+}
+.toggle button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 10px 18px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-right: 1px solid var(--rule-strong);
+  transition: background .15s, color .15s;
+}
+.toggle button:last-child { border-right: none; }
+.toggle button.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+.toggle button.active.expense { background: var(--oxblood); }
+.toggle button.active.income { background: var(--moss); }
+
+form.compose-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+}
+form.compose-form .full { grid-column: 1 / -1; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field input,
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--paper);
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  padding: 10px 0;
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px;
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus {
+  border-bottom-color: var(--oxblood);
+}
+.field input::placeholder { color: var(--muted); font-style: italic; }
+.field.amount input {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.field select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 5 4-5' fill='none' stroke='%2314233b' stroke-width='1.4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 22px;
+}
+button.submit {
+  appearance: none;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 16px 22px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  margin-top: 6px;
+  width: 100%;
+}
+button.submit:hover { background: var(--oxblood); }
+button.submit:active { transform: translateY(1px); }
+@media (max-width: 880px) {
+  .compose { grid-template-columns: 1fr; gap: 22px; }
+  form.compose-form { grid-template-columns: 1fr; }
+}
+
+/* ─── Salary card ─────────────────────────────────── */
+.salary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 28px 32px;
+  position: relative;
+}
+.salary::after {
+  content: "";
+  position: absolute;
+  top: 18px; right: 18px; bottom: 18px;
+  border-right: 1px solid var(--rule);
+}
+.salary h3 {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0 0 14px;
+  letter-spacing: -.01em;
+}
+.salary .row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--rule-strong);
+  gap: 12px;
+}
+.salary .row:last-of-type { border-bottom: none; }
+.salary .row span:first-child {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.salary .row span:last-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .04em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.salary input.amount {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  padding: 6px 0;
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  color: var(--ink);
+}
+.salary .ctas {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.salary button {
+  appearance: none;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 16px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.salary button.primary {
+  background: var(--moss);
+  border-color: var(--moss);
+  color: var(--paper);
+}
+.salary button:hover { background: var(--ink); color: var(--paper); }
+.salary button.primary:hover { background: var(--ink); border-color: var(--ink); }
+@media (max-width: 760px) {
+  .salary { grid-template-columns: 1fr; gap: 18px; padding: 22px; }
+  .salary::after { display: none; }
+}
+
+/* ─── Ledger ──────────────────────────────────────── */
+.ledger { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; align-items: start; }
+@media (max-width: 880px) {
+  .ledger { grid-template-columns: 1fr; gap: 28px; }
+}
+
+.day-group {
+  margin-bottom: 28px;
+}
+.day-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+.day-head .date {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -.01em;
+}
+.day-head .date em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: .8em;
+  margin-left: 8px;
+}
+.day-head .total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.day-head .total b { color: var(--oxblood); font-weight: 500; }
+
+.entry {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px dotted var(--rule);
+  transition: background .15s;
+}
+.entry:hover { background: rgba(168,50,31,.04); }
+.entry .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  flex-shrink: 0;
+}
+.entry.income .dot { background: var(--moss); }
+.entry.expense .dot { background: var(--oxblood); }
+.entry .body { min-width: 0; }
+.entry .name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  color: var(--ink);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entry .meta {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.entry .amount {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+.entry.income .amount { color: var(--moss); }
+.entry.expense .amount { color: var(--oxblood); }
+.entry .del {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font: 500 14px/1 'Instrument Serif', serif;
+  font-style: italic;
+  cursor: pointer;
+  padding: 4px 6px;
+  opacity: 0;
+  transition: opacity .15s, color .15s;
+}
+.entry:hover .del, .entry:focus-within .del { opacity: 1; }
+.entry .del:hover { color: var(--oxblood); }
+@media (hover: none) { .entry .del { opacity: .55; } }
+@media (max-width: 480px) {
+  .entry { grid-template-columns: auto 1fr auto; gap: 10px; }
+  .entry .del { grid-column: 3; grid-row: 2; opacity: .55; justify-self: end; }
+  .entry .amount { grid-column: 3; grid-row: 1; }
+  .entry .name { font-size: 18px; }
+}
+
+.empty {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--muted);
+  padding: 30px 0;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* ─── Categories ──────────────────────────────────── */
+.cats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cat {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted var(--rule);
+}
+.cat .name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  color: var(--ink);
+}
+.cat .amt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.cat .bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  background: var(--paper-2);
+  position: relative;
+  overflow: hidden;
+}
+.cat .bar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: var(--pct, 0%);
+  background: var(--oxblood);
+  transition: width .8s cubic-bezier(.4,.2,.2,1);
+}
+.cat .bar.alt::before { background: var(--moss); }
+
+/* ─── Footer ──────────────────────────────────────── */
+footer {
+  padding: 40px 0 60px;
+  text-align: center;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 15px;
+}
+footer .ornament {
+  margin: 0 auto 12px;
+  width: 60px; height: 1px;
+  background: var(--rule-strong);
+  position: relative;
+}
+footer .ornament::before {
+  content: "❦";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  padding: 0 10px;
+  font-style: normal;
+  color: var(--oxblood);
+  font-size: 16px;
+}
+
+/* ─── Import block ────────────────────────────────── */
+.import-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+.import-grid textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-strong);
+  padding: 16px 18px;
+  font: 400 13px/1.55 'JetBrains Mono', monospace;
+  color: var(--ink);
+  outline: none;
+  border-radius: 0;
+  transition: border-color .15s;
+}
+.import-grid textarea:focus { border-color: var(--oxblood); }
+.import-grid .row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.import-grid button {
+  appearance: none;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 12px 18px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.import-grid button.primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.import-grid button.primary:hover { background: var(--oxblood); border-color: var(--oxblood); }
+.import-grid button:hover { background: var(--ink); color: var(--paper); }
+.import-grid input[type=file] { display: none; }
+.import-grid label.file-btn { cursor: pointer; }
+.import-help {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 22px 24px;
+  position: relative;
+}
+.import-help h4 {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  font-weight: 500;
+  font-size: 18px;
+  margin: 0 0 10px;
+  letter-spacing: -.005em;
+}
+.import-help p {
+  margin: 0 0 12px;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.import-help pre {
+  margin: 0;
+  background: var(--paper);
+  border: 1px dotted var(--rule-strong);
+  padding: 12px 14px;
+  font: 400 11px/1.5 'JetBrains Mono', monospace;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre;
+}
+.import-status {
+  margin-top: 14px;
+  font: 500 11px/1.5 'JetBrains Mono', monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.import-status.err { color: var(--oxblood); }
+.import-status.ok  { color: var(--moss); }
+@media (max-width: 880px) {
+  .import-grid { grid-template-columns: 1fr; gap: 22px; }
+}
+
+/* ─── Login overlay ───────────────────────────────── */
+.login-overlay {
+  position: fixed; inset: 0;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+.login-overlay::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.13 0 0 0 0 0.23 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: .06;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.login-card {
+  position: relative;
+  width: min(420px, 100%);
+  border: 1px solid var(--rule-strong);
+  padding: 36px 32px 32px;
+  background: var(--paper-2);
+}
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.login-card .brand-mini {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  font-weight: 500;
+  font-size: 36px;
+  text-align: center;
+  margin: 0 0 6px;
+  letter-spacing: -.01em;
+}
+.login-card .brand-mini .yat { font-style: italic; color: var(--oxblood); }
+.login-card .sub {
+  text-align: center;
+  font: 500 10px/1.4 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.login-card label {
+  display: block;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.login-card input {
+  width: 100%;
+  background: var(--paper);
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  padding: 10px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+  border-radius: 0;
+  letter-spacing: .04em;
+}
+.login-card input:focus { border-bottom-color: var(--oxblood); }
+.login-card button {
+  margin-top: 22px;
+  width: 100%;
+  appearance: none;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 14px 20px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s;
+}
+.login-card button:hover { background: var(--oxblood); }
+.login-card .err {
+  margin-top: 12px;
+  text-align: center;
+  font: 500 10px/1.4 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  min-height: 14px;
+}
+.login-card .footnote {
+  margin-top: 24px;
+  text-align: center;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ─── Toast ───────────────────────────────────────── */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 20px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  z-index: 50;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* fade-in for new entries */
+@keyframes appear {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.entry { animation: appear .35s ease both; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-row">
+      <div class="masthead-meta" id="issueLabel">Том&nbsp;I · Выпуск&nbsp;—</div>
+      <h1 class="brand">Капитал<span class="yat">ъ</span></h1>
+      <div class="masthead-meta right" id="dateLabel">—</div>
+    </div>
+    <div class="subbar">
+      <nav>
+        <a href="#balance">Баланс</a>
+        <a href="#compose">Запись</a>
+        <a href="#salary">Жалованье</a>
+        <a href="#import">Импорт</a>
+        <a href="#ledger">Хроника</a>
+        <a href="#cats">Структура</a>
+      </nav>
+      <span>Личная финансовая хроника</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap" id="balance">
+    <div class="hero">
+      <div>
+        <h2 class="hero-headline">
+          Каждая копейка<br>
+          <em>имеет</em> историю.
+        </h2>
+        <p class="hero-lede">
+          Тихое искусство приумножения начинается с честной хроники: от пачки сигарет до квартирной платы — всё на одной странице. Эта тетрадь живёт на вашем сервере и принадлежит только вам.
+        </p>
+      </div>
+
+      <aside class="balance-card">
+        <div class="label">На балансе</div>
+        <div class="month" id="monthLabel">—</div>
+        <div class="balance-amount" id="balanceAmount">
+          <span class="sym">₽</span>
+          <span id="balanceValue">0</span>
+        </div>
+        <svg class="balance-spark" id="spark" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true">
+          <path id="sparkPath" d="" fill="none" stroke="#14233b" stroke-width="1.4" />
+          <path id="sparkFill" d="" fill="rgba(20,35,59,.08)" />
+        </svg>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="stats">
+      <div class="stat">
+        <span class="corner">i</span>
+        <div class="stat-label">Доходы за месяц</div>
+        <div class="stat-value income" id="incomeValue">0&nbsp;₽</div>
+        <div class="stat-foot" id="incomeFoot">пока ничего не зачислено</div>
+      </div>
+      <div class="stat">
+        <span class="corner">ii</span>
+        <div class="stat-label">Расходы за месяц</div>
+        <div class="stat-value expense" id="expenseValue">0&nbsp;₽</div>
+        <div class="stat-foot" id="expenseFoot">записей: 0</div>
+      </div>
+      <div class="stat">
+        <span class="corner">iii</span>
+        <div class="stat-label">Среднее в день</div>
+        <div class="stat-value" id="avgValue">0&nbsp;₽</div>
+        <div class="stat-foot" id="avgFoot">по текущему месяцу</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="compose">
+    <div class="section-head">
+      <span class="num">№ 01</span>
+      <h2>Новая <em>запись</em></h2>
+      <div class="rule"></div>
+      <span class="stamp">Compose</span>
+    </div>
+
+    <div class="compose">
+      <div>
+        <div class="toggle" role="tablist" aria-label="Тип записи">
+          <button type="button" class="active expense" data-type="expense">Расход</button>
+          <button type="button" data-type="income">Доход</button>
+        </div>
+        <form class="compose-form" id="entryForm" autocomplete="off">
+          <div class="field full">
+            <label for="name">Что именно</label>
+            <input id="name" name="name" required maxlength="80" placeholder="Кофе, метро, аренда…" />
+          </div>
+          <div class="field amount">
+            <label for="amount">Сумма, ₽</label>
+            <input id="amount" name="amount" inputmode="decimal" required placeholder="0" />
+          </div>
+          <div class="field">
+            <label for="category">Раздел</label>
+            <select id="category" name="category" required></select>
+          </div>
+          <div class="field">
+            <label for="date">Дата</label>
+            <input id="date" name="date" type="date" required />
+          </div>
+          <div class="field full">
+            <button class="submit" type="submit">Внести в хронику</button>
+          </div>
+        </form>
+      </div>
+      <div class="aside">
+        <b>Заметка редактора</b>
+        Записывайте без оглядки. Нет «слишком мелких» трат — именно из них складывается портрет месяца. Сигарета — это запись. Чашка кофе — это запись. Хлеб — это запись.
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="salary">
+    <div class="section-head">
+      <span class="num">№ 02</span>
+      <h2>Жалованье</h2>
+      <div class="rule"></div>
+      <span class="stamp" id="payStamp">Расчётные дни · 15 / 30</span>
+    </div>
+
+    <div class="salary">
+      <div>
+        <h3>Размер выплаты</h3>
+        <input class="amount" id="salaryInput" inputmode="decimal" placeholder="0" />
+        <div class="row"><span>Зачисление</span><span>15-го и 30-го числа</span></div>
+        <div class="row"><span>Половин в месяц</span><span id="halvesNote">— / 2</span></div>
+        <div class="ctas">
+          <button id="saveSalary">Сохранить размер</button>
+          <button class="primary" id="addSalary">Зачислить сейчас</button>
+        </div>
+      </div>
+      <div>
+        <h3>Расписание</h3>
+        <div class="row"><span>Ближайшая выплата</span><span id="nextPay">—</span></div>
+        <div class="row"><span>Через</span><span id="daysToPay">—</span></div>
+        <div class="row"><span>Получено в этом месяце</span><span id="receivedMonth">0&nbsp;₽</span></div>
+        <div class="row"><span>Всего за всё время</span><span id="receivedAll">0&nbsp;₽</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="import">
+    <div class="section-head">
+      <span class="num">№ 03</span>
+      <h2>Импорт <em>из чека</em></h2>
+      <div class="rule"></div>
+      <span class="stamp">JSON · фото → нейросеть → сюда</span>
+    </div>
+
+    <div class="import-grid">
+      <div>
+        <textarea id="importText" placeholder='[
+  { "name": "Хлеб бородинский", "amount": 75,  "category": "Еда", "date": "2026-04-27", "type": "expense" },
+  { "name": "Молоко 3,2%",      "amount": 95,  "category": "Еда" },
+  { "name": "Аренда квартиры",   "amount": 65000, "category": "Жильё", "date": "2026-04-15" }
+]'></textarea>
+        <div class="row">
+          <button class="primary" id="importGo">Импортировать</button>
+          <button id="importPreview">Предпросмотр</button>
+          <label class="file-btn" for="importFile"><span style="display:inline-block;border:1px solid var(--ink);padding:12px 18px;font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.22em;text-transform:uppercase;">Загрузить .json</span></label>
+          <input id="importFile" type="file" accept="application/json,.json" />
+          <button id="copyPrompt">Скопировать промпт для нейросети</button>
+        </div>
+        <div class="import-status" id="importStatus"></div>
+      </div>
+      <aside class="import-help">
+        <h4>Как пользоваться</h4>
+        <p>Сфотографируйте чек, отправьте нейросети с готовым промптом (кнопка слева кладёт его в буфер). В ответ — JSON-массив. Вставьте в поле и нажмите «Импортировать».</p>
+        <h4 style="margin-top:18px;">Минимальный формат</h4>
+<pre>{
+  "name": "что купили",
+  "amount": 75
+}</pre>
+        <p style="margin-top:10px;">Необязательные поля: <b style="font-style:normal;font-family:'JetBrains Mono',monospace;font-size:11px;">category, date, type, note</b>. По умолчанию — <em>Другое</em>, сегодня, расход.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap section" id="ledger">
+    <div class="section-head">
+      <span class="num">№ 04</span>
+      <h2>Хроника <em>операций</em></h2>
+      <div class="rule"></div>
+      <span class="stamp" id="ledgerStamp">Все записи · 0</span>
+    </div>
+
+    <div class="ledger">
+      <div id="entries"></div>
+
+      <aside id="cats">
+        <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">
+          Структура расходов · текущий месяц
+        </div>
+        <div class="cats" id="catsList"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="ornament"></div>
+  <div>Печатается для вас одного. Хранится на вашем сервере.</div>
+  <div style="margin-top:6px;"><a href="#" id="logoutLink" style="color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--rule-strong);">выйти</a></div>
+  <div style="font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;letter-spacing:.22em;margin-top:10px;color:var(--rule-strong);text-transform:uppercase;">
+    MMXXVI · Anno · Personalis
+  </div>
+</footer>
+
+<div class="login-overlay" id="loginOverlay" hidden>
+  <div class="login-card">
+    <h2 class="brand-mini">Капитал<span class="yat">ъ</span></h2>
+    <div class="sub">Вход в личную хронику</div>
+    <form id="loginForm" autocomplete="off">
+      <label for="loginToken">Токен доступа</label>
+      <input id="loginToken" type="password" autocomplete="current-password" required spellcheck="false" />
+      <button type="submit">Войти</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+    <div class="footnote">Токен задаётся переменной окружения <span style="font-style:normal;font-family:'JetBrains Mono',monospace;font-size:11px;">ACCESS_TOKEN</span> на сервере.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+const TOKEN_KEY = 'kapital.token';
+const fmt = new Intl.NumberFormat('ru-RU');
+const fmtRub = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+const months = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+const monthsGen = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const weekdays = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+
+const expenseCats = ['Еда','Транспорт','Жильё','Сигареты','Развлечения','Здоровье','Одежда','Связь','Подарки','Другое'];
+const incomeCats  = ['Зарплата','Подработка','Подарок','Возврат','Другое'];
+
+const $ = (q) => document.querySelector(q);
+const $$ = (q) => document.querySelectorAll(q);
+
+const state = { transactions: [], salary: 0, ready: false };
+let token = localStorage.getItem(TOKEN_KEY) || '';
+
+// ── API client ──
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(opts.headers || {})
+    }
+  });
+  if (res.status === 401) {
+    localStorage.removeItem(TOKEN_KEY);
+    token = '';
+    showLogin();
+    throw new Error('unauthorized');
+  }
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`${res.status} ${text}`);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+// ── Login ──
+function showLogin(msg) {
+  $('#loginOverlay').hidden = false;
+  $('#loginErr').textContent = msg || '';
+  setTimeout(() => $('#loginToken').focus(), 30);
+}
+function hideLogin() { $('#loginOverlay').hidden = true; }
+
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const t = $('#loginToken').value.trim();
+  if (!t) return;
+  token = t;
+  try {
+    await api('/api/auth/check', { method: 'POST' });
+    localStorage.setItem(TOKEN_KEY, token);
+    hideLogin();
+    await boot();
+  } catch (err) {
+    token = '';
+    $('#loginErr').textContent = 'Неверный токен';
+  }
+});
+
+$('#logoutLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  localStorage.removeItem(TOKEN_KEY);
+  token = '';
+  showLogin();
+});
+
+// ── Helpers ──
+function todayISO(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function parseAmount(s) {
+  if (typeof s !== 'string') s = String(s);
+  s = s.replace(/\s/g, '').replace(',', '.');
+  const n = parseFloat(s);
+  return isFinite(n) ? Math.max(0, n) : 0;
+}
+function toRoman(n) {
+  const map = [['M',1000],['CM',900],['D',500],['CD',400],['C',100],['XC',90],['L',50],['XL',40],['X',10],['IX',9],['V',5],['IV',4],['I',1]];
+  let r = '';
+  for (const [s, v] of map) while (n >= v) { r += s; n -= v; }
+  return r;
+}
+function sameMonth(iso, ref) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
+}
+function formatDayHeading(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dd = new Date(d); dd.setHours(0,0,0,0);
+  const diff = Math.round((today - dd) / 86400000);
+  let rel = '';
+  if (diff === 0) rel = 'сегодня';
+  else if (diff === 1) rel = 'вчера';
+  else if (diff === -1) rel = 'завтра';
+  else rel = weekdays[d.getDay()];
+  return { main: `${d.getDate()} ${monthsGen[d.getMonth()]}`, rel };
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ── Header ──
+function paintHeader() {
+  const now = new Date();
+  const dateStr = `${weekdays[now.getDay()]} · ${now.getDate()} ${monthsGen[now.getMonth()]} ${now.getFullYear()}`;
+  $('#dateLabel').textContent = dateStr.toUpperCase();
+  const issueNum = (now.getFullYear() - 2025) * 12 + now.getMonth() + 1;
+  $('#issueLabel').innerHTML = `Том&nbsp;${toRoman(now.getFullYear() - 2025 + 1)} · Выпуск&nbsp;${toRoman(issueNum)}`;
+  $('#monthLabel').textContent = `Месяц: ${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+// ── Compose ──
+let composeType = 'expense';
+function paintCategorySelect() {
+  const sel = $('#category');
+  const list = composeType === 'expense' ? expenseCats : incomeCats;
+  sel.innerHTML = list.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+$$('.toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('.toggle button').forEach(b => b.classList.remove('active','expense','income'));
+    btn.classList.add('active', btn.dataset.type);
+    composeType = btn.dataset.type;
+    paintCategorySelect();
+  });
+});
+
+$('#amount').addEventListener('input', (e) => {
+  const cleaned = e.target.value.replace(/[^\d.,]/g, '');
+  const v = parseAmount(cleaned);
+  e.target.value = v ? fmt.format(v) : cleaned;
+});
+
+$('#entryForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('#name').value.trim();
+  const amount = parseAmount($('#amount').value);
+  const category = $('#category').value;
+  const date = $('#date').value || todayISO();
+  if (!name || !amount) { toast('Заполните название и сумму'); return; }
+  try {
+    const tx = await api('/api/transactions', {
+      method: 'POST',
+      body: JSON.stringify({ type: composeType, name, category, amount, date })
+    });
+    state.transactions.unshift(tx);
+    render();
+    $('#name').value = '';
+    $('#amount').value = '';
+    $('#name').focus();
+    toast(composeType === 'expense' ? 'Расход внесён' : 'Доход зачислен');
+  } catch { toast('Ошибка сервера'); }
+});
+
+// ── Salary ──
+function nextPaydate(from = new Date()) {
+  const y = from.getFullYear(), m = from.getMonth(), d = from.getDate();
+  const fifteenth = new Date(y, m, 15);
+  const lastDay = new Date(y, m + 1, 0).getDate();
+  const thirtieth = new Date(y, m, Math.min(30, lastDay));
+  if (d < 15) return fifteenth;
+  if (d < Math.min(30, lastDay)) return thirtieth;
+  return new Date(y, m + 1, 15);
+}
+function paintSalary() {
+  if (document.activeElement !== $('#salaryInput')) {
+    $('#salaryInput').value = state.salary ? fmt.format(state.salary) : '';
+  }
+  $('#halvesNote').textContent = state.salary ? `${fmtRub.format(state.salary)} × 2` : '— / 2';
+  const np = nextPaydate();
+  $('#nextPay').textContent = `${np.getDate()} ${monthsGen[np.getMonth()]}`;
+  const days = Math.max(0, Math.ceil((np - new Date()) / 86400000));
+  $('#daysToPay').textContent = days === 0 ? 'сегодня' : days === 1 ? '1 день' : `${days} дн.`;
+  const now = new Date();
+  const incomeMonth = state.transactions
+    .filter(t => t.type === 'income' && t.category === 'Зарплата' && sameMonth(t.date, now))
+    .reduce((a, b) => a + b.amount, 0);
+  const incomeAll = state.transactions
+    .filter(t => t.type === 'income' && t.category === 'Зарплата')
+    .reduce((a, b) => a + b.amount, 0);
+  $('#receivedMonth').textContent = fmtRub.format(incomeMonth);
+  $('#receivedAll').textContent   = fmtRub.format(incomeAll);
+}
+$('#salaryInput').addEventListener('input', (e) => {
+  const v = parseAmount(e.target.value);
+  e.target.value = v ? fmt.format(v) : '';
+});
+$('#saveSalary').addEventListener('click', async () => {
+  const v = parseAmount($('#salaryInput').value);
+  try {
+    await api('/api/settings', { method: 'PUT', body: JSON.stringify({ salary: v }) });
+    state.salary = v;
+    paintSalary();
+    toast(v ? 'Размер выплаты сохранён' : 'Размер обнулён');
+  } catch { toast('Ошибка сохранения'); }
+});
+$('#addSalary').addEventListener('click', async () => {
+  const v = parseAmount($('#salaryInput').value) || state.salary;
+  if (!v) { toast('Сначала укажите размер'); return; }
+  try {
+    if (v !== state.salary) {
+      await api('/api/settings', { method: 'PUT', body: JSON.stringify({ salary: v }) });
+      state.salary = v;
+    }
+    const tx = await api('/api/transactions', {
+      method: 'POST',
+      body: JSON.stringify({ type: 'income', name: 'Зарплата', category: 'Зарплата', amount: v, date: todayISO() })
+    });
+    state.transactions.unshift(tx);
+    render();
+    toast('Жалованье зачислено');
+  } catch { toast('Ошибка сервера'); }
+});
+
+// ── Render ──
+function render() {
+  paintHeader();
+  paintSalary();
+  paintBalance();
+  paintEntries();
+  paintCategories();
+}
+
+function paintBalance() {
+  const now = new Date();
+  const monthTx = state.transactions.filter(t => sameMonth(t.date, now));
+  const income  = monthTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+  const expense = monthTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  const balance = income - expense;
+
+  $('#balanceAmount').classList.toggle('neg', balance < 0);
+  $('#balanceValue').textContent = fmt.format(Math.abs(Math.round(balance))) + (balance < 0 ? ' —' : '');
+
+  $('#incomeValue').textContent  = fmtRub.format(income);
+  $('#expenseValue').textContent = fmtRub.format(expense);
+  const expCount = monthTx.filter(t => t.type === 'expense').length;
+  $('#expenseFoot').textContent = `записей: ${expCount}`;
+  $('#incomeFoot').textContent  = income ? `за ${months[now.getMonth()]}` : 'пока ничего не зачислено';
+
+  const day = now.getDate();
+  const avg = day > 0 ? expense / day : 0;
+  $('#avgValue').textContent = fmtRub.format(Math.round(avg));
+
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const series = new Array(daysInMonth).fill(0);
+  for (const t of monthTx) {
+    const idx = new Date(t.date + 'T00:00:00').getDate() - 1;
+    if (idx >= 0 && idx < daysInMonth) series[idx] += (t.type === 'income' ? t.amount : -t.amount);
+  }
+  let cum = 0;
+  const cumSeries = series.map(v => (cum += v));
+  const W = 300, H = 56;
+  const min = Math.min(0, ...cumSeries);
+  const max = Math.max(0, ...cumSeries);
+  const range = (max - min) || 1;
+  const pts = cumSeries.map((v, i) => {
+    const x = (i / Math.max(1, daysInMonth - 1)) * W;
+    const y = H - ((v - min) / range) * (H - 6) - 3;
+    return [x, y];
+  });
+  const path = pts.map((p,i) => `${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  $('#sparkPath').setAttribute('d', path);
+  $('#sparkFill').setAttribute('d', path + ` L${W},${H} L0,${H} Z`);
+  $('#sparkPath').setAttribute('stroke', balance < 0 ? '#a8321f' : '#14233b');
+}
+
+function paintEntries() {
+  const list = [...state.transactions].sort((a,b) => {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.ts || 0) - (a.ts || 0);
+  });
+  $('#ledgerStamp').textContent = `Все записи · ${list.length}`;
+  const container = $('#entries');
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">Хроника пока пуста — внесите первую запись выше.</div>';
+    return;
+  }
+  const groups = {};
+  for (const t of list) (groups[t.date] = groups[t.date] || []).push(t);
+
+  let html = '';
+  for (const date of Object.keys(groups)) {
+    const items = groups[date];
+    const heading = formatDayHeading(date);
+    const dayExpense = items.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+    const dayIncome  = items.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+    let totalLine = '';
+    if (dayExpense) totalLine += `<b>− ${fmtRub.format(dayExpense)}</b>`;
+    if (dayIncome) totalLine += (totalLine ? ' · ' : '') + `+ ${fmtRub.format(dayIncome)}`;
+    html += `
+      <div class="day-group">
+        <div class="day-head">
+          <div class="date">${heading.main} <em>${heading.rel}</em></div>
+          <div class="total">${totalLine}</div>
+        </div>
+        ${items.map(t => `
+          <div class="entry ${t.type}" data-id="${escapeHtml(t.id)}">
+            <span class="dot"></span>
+            <div class="body">
+              <div class="name">${escapeHtml(t.name)}</div>
+              <div class="meta">${escapeHtml(t.category)}</div>
+            </div>
+            <div class="amount">${t.type === 'expense' ? '−' : '+'} ${fmtRub.format(t.amount)}</div>
+            <button class="del" title="Удалить" aria-label="Удалить запись">удалить</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+
+  container.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = e.target.closest('.entry').dataset.id;
+      try {
+        await api(`/api/transactions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        state.transactions = state.transactions.filter(t => t.id !== id);
+        render();
+        toast('Запись удалена');
+      } catch { toast('Ошибка удаления'); }
+    });
+  });
+}
+
+function paintCategories() {
+  const now = new Date();
+  const monthExp = state.transactions.filter(t => t.type === 'expense' && sameMonth(t.date, now));
+  const totals = {};
+  for (const t of monthExp) totals[t.category] = (totals[t.category] || 0) + t.amount;
+  const arr = Object.entries(totals).sort((a,b) => b[1] - a[1]);
+  const max = arr.length ? arr[0][1] : 1;
+  const list = $('#catsList');
+  if (!arr.length) {
+    list.innerHTML = '<div style="font-family:\'Instrument Serif\',serif;font-style:italic;color:var(--muted);font-size:16px;">Расходов пока нет.</div>';
+    return;
+  }
+  list.innerHTML = arr.map(([cat, amt]) => `
+    <div class="cat">
+      <span class="name">${escapeHtml(cat)}</span>
+      <span class="amt">${fmtRub.format(amt)}</span>
+      <div class="bar" style="--pct:${(amt / max * 100).toFixed(1)}%"></div>
+    </div>
+  `).join('');
+}
+
+// ── JSON Import ──
+function extractItems(parsed) {
+  if (Array.isArray(parsed)) return parsed;
+  if (parsed && Array.isArray(parsed.items)) return parsed.items;
+  if (parsed && Array.isArray(parsed.transactions)) return parsed.transactions;
+  if (parsed && typeof parsed === 'object' && parsed.name) return [parsed];
+  return null;
+}
+function tryParse(text) {
+  text = text.trim();
+  if (!text) return { ok: false, msg: 'Пусто' };
+  // strip code fences
+  text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+  try {
+    const p = JSON.parse(text);
+    const items = extractItems(p);
+    if (!items) return { ok: false, msg: 'Ожидался массив объектов' };
+    return { ok: true, items };
+  } catch (e) {
+    return { ok: false, msg: 'Невалидный JSON: ' + e.message.slice(0, 80) };
+  }
+}
+
+function setStatus(msg, kind = '') {
+  const el = $('#importStatus');
+  el.textContent = msg;
+  el.className = 'import-status ' + kind;
+}
+
+$('#importPreview').addEventListener('click', () => {
+  const r = tryParse($('#importText').value);
+  if (!r.ok) return setStatus(r.msg, 'err');
+  const total = r.items.reduce((a, x) => a + (parseFloat(String(x.amount ?? x.sum ?? 0).replace(/\s/g,'').replace(',','.')) || 0), 0);
+  setStatus(`Найдено записей: ${r.items.length} · сумма ${fmtRub.format(total)}`, 'ok');
+});
+
+$('#importGo').addEventListener('click', async () => {
+  const r = tryParse($('#importText').value);
+  if (!r.ok) return setStatus(r.msg, 'err');
+  setStatus('Отправка…');
+  try {
+    const res = await api('/api/transactions/bulk', { method: 'POST', body: JSON.stringify(r.items) });
+    if (res.items?.length) state.transactions = [...res.items, ...state.transactions];
+    render();
+    let msg = `Внесено: ${res.inserted}`;
+    if (res.rejected) msg += ` · отклонено: ${res.rejected}`;
+    setStatus(msg, res.rejected ? 'err' : 'ok');
+    toast(`Импортировано: ${res.inserted}`);
+    if (!res.rejected) $('#importText').value = '';
+  } catch { setStatus('Ошибка сервера', 'err'); }
+});
+
+$('#importFile').addEventListener('change', async (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  const text = await f.text();
+  $('#importText').value = text;
+  setStatus(`Файл загружен: ${f.name}`, 'ok');
+  e.target.value = '';
+});
+
+const PROMPT_TEMPLATE = `Распознай этот чек и верни ТОЛЬКО валидный JSON-массив без пояснений и без блоков кода.
+Каждая позиция чека — отдельный объект формата:
+{ "name": "название товара", "amount": число_рублей, "category": "одна из: Еда, Транспорт, Жильё, Сигареты, Развлечения, Здоровье, Одежда, Связь, Подарки, Другое", "date": "ГГГГ-ММ-ДД", "type": "expense" }
+
+Правила:
+- если на чеке указана дата — используй её, иначе сегодняшнюю
+- объединяй одинаковые позиции, в name указывай количество в скобках
+- округляй суммы до целых рублей
+- если категория не очевидна — ставь "Другое"
+- никаких комментариев, только массив`;
+
+$('#copyPrompt').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(PROMPT_TEMPLATE);
+    toast('Промпт скопирован');
+  } catch {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = PROMPT_TEMPLATE;
+    document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('Промпт скопирован');
+  }
+});
+
+// ── Toast ──
+let toastTimer;
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// ── Boot ──
+async function boot() {
+  $('#date').value = todayISO();
+  paintCategorySelect();
+  paintHeader();
+  try {
+    const [txs, settings] = await Promise.all([
+      api('/api/transactions'),
+      api('/api/settings')
+    ]);
+    state.transactions = txs;
+    state.salary = Number(settings.salary) || 0;
+    state.ready = true;
+    render();
+  } catch (e) {
+    if (e.message !== 'unauthorized') toast('Ошибка загрузки');
+  }
+}
+
+async function init() {
+  if (!token) { showLogin(); return; }
+  try {
+    await api('/api/auth/check', { method: 'POST' });
+    hideLogin();
+    await boot();
+  } catch {
+    showLogin();
+  }
+}
+init();
+
+setTimeout(() => {
+  paintHeader(); paintSalary();
+  setInterval(() => { paintHeader(); paintSalary(); }, 60 * 60 * 1000);
+}, (60 - new Date().getSeconds()) * 1000);
+
+})();
+</script>
+</body>
+</html>
