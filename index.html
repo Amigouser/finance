@@ -90,7 +90,7 @@ main, header, footer { position: relative; z-index: 2; }
   padding: 0 36px;
 }
 @media (max-width: 680px) {
-  .wrap { padding: 0 22px; }
+  .wrap { padding: 0 max(24px, env(safe-area-inset-left) + 16px); }
   body { font-size: 16px; }
 }
 
