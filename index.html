@@ -947,6 +947,29 @@ footer .ornament::before {
 }
 .theme-toggle:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
+.data-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-soft);
+  padding: 6px 10px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: background .15s, color .15s, border-color .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.data-btn:hover { background: var(--gilt); color: var(--paper); border-color: var(--gilt); }
+.data-btn.up:hover { background: var(--oxblood); border-color: var(--oxblood); }
+@media (max-width: 680px) {
+  .data-btn { padding: 5px 7px; font-size: 9px; letter-spacing: .14em; }
+  .data-btn .lbl { display: none; }
+}
+
 /* ─── Ledger filters ──────────────────────────────── */
 .ledger-filters {
   display: grid;
@@ -1190,6 +1213,17 @@ footer .ornament::before {
   transition: background .15s, color .15s, border-color .15s;
 }
 .export-row button:hover { border-color: var(--ink); color: var(--ink); }
+.export-row button.primary {
+  background: var(--gilt);
+  border-color: var(--gilt);
+  color: var(--paper);
+  border-style: solid;
+}
+.export-row button.primary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
 
 /* ─── Spark label ─────────────────────────────────── */
 .spark-label {
@@ -1230,6 +1264,321 @@ footer .ornament::before {
 .edit-banner button:hover { background: var(--paper); color: var(--ink); }
 .entry { cursor: pointer; }
 .entry .body { cursor: pointer; }
+
+/* ─── Shared toggle (compose & import) ────────────── */
+.shared-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px dashed var(--rule-strong);
+  background: var(--paper-2);
+  margin: 6px 0 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .15s, background .15s;
+}
+.shared-toggle:hover { border-color: var(--gilt); }
+.shared-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.shared-toggle .box {
+  width: 18px; height: 18px;
+  border: 1.4px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--paper);
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--paper);
+}
+.shared-toggle.on .box { background: var(--gilt); border-color: var(--gilt); color: var(--paper); }
+.shared-toggle.on .box::after { content: "✓"; }
+.shared-toggle .lbl {
+  font: 500 11px/1.2 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.shared-toggle .lbl em {
+  display: block;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 4px;
+}
+.shared-toggle.on { border-style: solid; border-color: var(--gilt); }
+
+/* Marker for shared entries inside ledger */
+.entry .badge-shared {
+  display: inline-block;
+  font: 500 9px/1 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gilt);
+  border: 1px solid var(--gilt);
+  padding: 2px 5px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ─── Joint section ───────────────────────────────── */
+.joint-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  margin-bottom: 28px;
+}
+.joint-stats .stat { border-right: 1px solid var(--rule); }
+.joint-stats .stat:last-child { border-right: none; }
+.joint-stats .stat-value.gilt { color: var(--gilt); }
+.joint-stats .stat-value.mine { color: var(--oxblood); }
+.joint-stats .stat-value.hers { color: var(--moss); }
+@media (max-width: 760px) {
+  .joint-stats { grid-template-columns: 1fr; }
+  .joint-stats .stat { border-right: none; border-bottom: 1px solid var(--rule); }
+  .joint-stats .stat:last-child { border-bottom: none; }
+}
+.joint-empty {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--muted);
+  padding: 18px 0;
+}
+
+/* OFD import block */
+.ofd-block {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-2);
+  padding: 18px 20px;
+  margin-bottom: 22px;
+  position: relative;
+}
+.ofd-block::before {
+  content: "OFD";
+  position: absolute;
+  top: -10px; left: 14px;
+  background: var(--paper);
+  padding: 0 8px;
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  color: var(--gilt);
+}
+.ofd-block .lbl {
+  display: block;
+  font: 500 10px/1.4 'JetBrains Mono', monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.ofd-block .lbl em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  letter-spacing: 0;
+  text-transform: none;
+  display: block;
+  margin-top: 4px;
+}
+.ofd-block .row-input {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+.ofd-block input[type="url"] {
+  flex: 1 1 320px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  padding: 10px 14px;
+  font: 400 13px/1.2 'JetBrains Mono', monospace;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.ofd-block input[type="url"]:focus { border-color: var(--gilt); }
+.ofd-block button {
+  appearance: none;
+  background: var(--gilt);
+  color: var(--paper);
+  border: none;
+  padding: 10px 18px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s;
+}
+.ofd-block button:hover { background: var(--ink); }
+.ofd-block button:disabled { opacity: .5; cursor: wait; }
+.ofd-block .preview {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dotted var(--rule-strong);
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px;
+  color: var(--ink-soft);
+  display: none;
+}
+.ofd-block .preview.on { display: block; }
+.ofd-block .preview b {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  color: var(--ink);
+}
+.ofd-block .preview .meta {
+  font: 500 10px/1.4 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.ofd-block .preview .err {
+  color: var(--oxblood);
+  font-style: italic;
+}
+
+/* Joint month picker row */
+.joint-month-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -8px 0 12px;
+  flex-wrap: wrap;
+}
+.joint-month-row .lbl {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.joint-month-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-strong);
+  padding: 8px 28px 8px 12px;
+  font: 500 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 0;
+  outline: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 5 4-5' fill='none' stroke='%2314233b' stroke-width='1.4'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+[data-theme="dark"] .joint-month-row select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 5 4-5' fill='none' stroke='%23ece4d0' stroke-width='1.4'/></svg>");
+}
+.joint-month-row.disabled { opacity: .35; pointer-events: none; }
+
+/* Products rollup */
+.joint-products {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+.joint-products h3 {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144, "WONK" 1;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -.01em;
+  margin: 0 0 4px;
+}
+.joint-products h3 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  color: var(--gilt);
+}
+.joint-products .sub {
+  font: 500 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.joint-products .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.product-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+.product-row::before {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 2px;
+  background: var(--gilt);
+  width: var(--pct, 0%);
+  opacity: .55;
+}
+.product-row .name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+.product-row .meta {
+  font: 500 9px/1.4 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.product-row .meta em {
+  font-style: normal;
+  color: var(--ink-soft);
+}
+.product-row .total {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: "opsz" 144;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  color: var(--oxblood);
+  white-space: nowrap;
+}
+.product-row .half {
+  font: 500 9px/1 'JetBrains Mono', monospace;
+  letter-spacing: .14em;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 4px;
+}
+.product-row .variants {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+@media (max-width: 680px) {
+  .joint-products .grid { grid-template-columns: 1fr; }
+  .product-row { border-right: none; }
+}
 </style>
 </head>
 <body>
@@ -1250,9 +1599,12 @@ footer .ornament::before {
         <a href="#import">Импорт</a>
         <a href="#ledger">Хроника</a>
         <a href="#cats">Структура</a>
+        <a href="#joint">Совместно</a>
       </nav>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span>Личная финансовая хроника</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button class="data-btn" id="backupTopBtn" type="button" title="Скачать полную резервную копию (один JSON-файл со всеми транзакциями и настройками)">⬇<span class="lbl">&nbsp;Бэкап</span></button>
+        <button class="data-btn up" id="restoreTopBtn" type="button" title="Восстановить базу из файла резервной копии (текущие данные будут заменены)">⬆<span class="lbl">&nbsp;Импорт базы</span></button>
+        <input id="restoreFile" type="file" accept="application/json,.json" style="display:none" />
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" title="Сменить тему">☾</button>
       </div>
     </div>
@@ -1346,6 +1698,11 @@ footer .ornament::before {
             <label for="date">Дата</label>
             <input id="date" name="date" type="date" required />
           </div>
+          <label class="shared-toggle full" id="composeSharedToggle" for="composeShared">
+            <span class="box" aria-hidden="true"></span>
+            <input type="checkbox" id="composeShared" />
+            <span class="lbl">Совместно с девушкой <em>траты пойдут в раздел «Совместно» и поделятся 50 / 50</em></span>
+          </label>
           <div class="field full">
             <button class="submit" type="submit">Внести в хронику</button>
           </div>
@@ -1378,11 +1735,31 @@ footer .ornament::before {
 
     <div class="import-grid">
       <div>
+        <div class="ofd-block">
+          <span class="lbl">Импорт по чеку
+            <em>вставь URL вида check.ofd.ru/rec/… <b style="font-style:normal;">или</b> строку с QR-кода (t=…&amp;fn=…&amp;i=…&amp;fp=…) — сайт сам распознает и достанет позиции, цены, вес, магазин</em>
+          </span>
+          <div class="row-input">
+            <input type="text" id="ofdUrl" placeholder="check.ofd.ru/rec/...   или   t=20260423T1029&s=3052.15&fn=...&i=...&fp=...&n=1" autocomplete="off" spellcheck="false" />
+            <button id="ofdGo" type="button">Загрузить</button>
+          </div>
+          <div class="preview" id="ofdPreview"></div>
+        </div>
         <textarea id="importText" placeholder='[
   { "name": "Хлеб бородинский", "amount": 75,  "category": "Еда", "date": "2026-04-27", "type": "expense" },
   { "name": "Молоко 3,2%",      "amount": 95,  "category": "Еда" },
   { "name": "Аренда квартиры",   "amount": 65000, "category": "Жильё", "date": "2026-04-15" }
 ]'></textarea>
+        <label class="shared-toggle" id="importSharedToggle" for="importShared">
+          <span class="box" aria-hidden="true"></span>
+          <input type="checkbox" id="importShared" />
+          <span class="lbl">Чек совместный (с девушкой) <em>все позиции попадут в раздел «Совместно» и поделятся 50 / 50</em></span>
+        </label>
+        <label class="shared-toggle" id="importDedupToggle" for="importDedup">
+          <span class="box" aria-hidden="true"></span>
+          <input type="checkbox" id="importDedup" checked />
+          <span class="lbl">Пропускать дубли <em>не вносить позиции, у которых уже есть запись с такой же датой, названием и суммой</em></span>
+        </label>
         <div class="row">
           <button class="primary" id="importGo">Импортировать</button>
           <button id="importPreview">Предпросмотр</button>
@@ -1415,8 +1792,8 @@ footer .ornament::before {
     </div>
     <div class="cat-filter" id="catFilter"></div>
     <div class="export-row">
-      <button id="exportCsv">Скачать CSV</button>
-      <button id="exportJson">Скачать JSON</button>
+      <button id="exportCsv" title="Только личные траты (без совместных) в CSV — для Excel/Google Sheets">Скачать CSV (мои)</button>
+      <button id="exportJson" title="Только личные траты (без совместных) в JSON">Скачать JSON (мои)</button>
     </div>
 
     <div class="ledger">
@@ -1428,6 +1805,78 @@ footer .ornament::before {
         </div>
         <div class="cats" id="catsList"></div>
       </aside>
+    </div>
+  </section>
+
+  <section class="wrap section" id="joint">
+    <div class="section-head">
+      <span class="num" style="color:var(--gilt)">№ 05</span>
+      <h2>Совместно <em>с девушкой</em></h2>
+      <div class="rule"></div>
+      <span class="stamp" id="jointStamp">50 / 50</span>
+    </div>
+
+    <div class="joint-stats">
+      <div class="stat">
+        <span class="corner">i</span>
+        <div class="stat-label">Всего по чекам</div>
+        <div class="stat-value gilt" id="jointTotal">0&nbsp;₽</div>
+        <div class="stat-foot" id="jointTotalFoot">записей: 0</div>
+      </div>
+      <div class="stat">
+        <span class="corner">ii</span>
+        <div class="stat-label">Моя половина</div>
+        <div class="stat-value mine" id="jointMine">0&nbsp;₽</div>
+        <div class="stat-foot">50 % от общей суммы</div>
+      </div>
+      <div class="stat">
+        <span class="corner">iii</span>
+        <div class="stat-label">Половина девушки</div>
+        <div class="stat-value hers" id="jointHers">0&nbsp;₽</div>
+        <div class="stat-foot">50 % от общей суммы</div>
+      </div>
+    </div>
+
+    <div class="ledger-filters">
+      <div class="search">
+        <input id="jointSearch" type="search" placeholder="Поиск по продукту или категории…" autocomplete="off" />
+      </div>
+      <div class="chips" id="jointPeriodChips" role="group" aria-label="Период">
+        <button type="button" data-period="month" class="active">Месяц</button>
+        <button type="button" data-period="year">Год</button>
+        <button type="button" data-period="all">Всё время</button>
+      </div>
+    </div>
+    <div class="joint-month-row" id="jointMonthRow">
+      <span class="lbl">Месяц:</span>
+      <select id="jointMonth"></select>
+      <span class="lbl" style="margin-left:18px;">
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><input type="checkbox" id="jointGroupReceipts" style="accent-color:var(--gilt);" /> группировать по чекам</label>
+      </span>
+    </div>
+    <div class="cat-filter" id="jointCatFilter"></div>
+
+    <div class="ledger">
+      <div id="jointEntries"></div>
+
+      <aside>
+        <div style="font:500 10px/1 'JetBrains Mono',monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">
+          Категории совместных трат
+        </div>
+        <div class="cats" id="jointCatsList"></div>
+      </aside>
+    </div>
+
+    <div class="joint-products" id="jointSubcats">
+      <h3>По <em>подкатегориям</em></h3>
+      <div class="sub" id="jointSubcatsSub">—</div>
+      <div class="cats" id="jointSubcatsList"></div>
+    </div>
+
+    <div class="joint-products" id="jointProducts">
+      <h3>Свод <em>по продуктам</em></h3>
+      <div class="sub" id="jointProductsSub">—</div>
+      <div class="grid" id="jointProductsList"></div>
     </div>
   </section>
 </main>
@@ -1478,9 +1927,17 @@ const incomeCats  = ['Зарплата','Подработка','Подарок',
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => document.querySelectorAll(q);
 
-const state = { transactions: [], ready: false, filter: { q: '', period: 'month', category: '' } };
+const state = {
+  transactions: [],
+  ready: false,
+  filter: { q: '', period: 'month', category: '' },
+  jointFilter: { q: '', period: 'month', category: '', monthKey: null, groupByReceipt: false }
+};
 let editingId = null;
 let token = localStorage.getItem(TOKEN_KEY) || '';
+const isShared = (t) => t && (t.shared === 1 || t.shared === true);
+const personalTxAll = () => state.transactions.filter(t => !isShared(t));
+const sharedTxAll   = () => state.transactions.filter(t =>  isShared(t));
 
 // ── API client ──
 async function api(path, opts = {}) {
@@ -1633,6 +2090,7 @@ $$('.toggle button').forEach(btn => {
     btn.classList.add('active', btn.dataset.type);
     composeType = btn.dataset.type;
     paintCategorySelect();
+    syncComposeSharedVisibility();
   });
 });
 
@@ -1641,6 +2099,32 @@ $('#amount').addEventListener('input', (e) => {
   const v = parseAmount(cleaned);
   e.target.value = v ? fmt.format(v) : cleaned;
 });
+
+// ── Shared toggles ──
+function bindSharedToggle(toggleId, inputId) {
+  const wrap = document.getElementById(toggleId);
+  const inp = document.getElementById(inputId);
+  if (!wrap || !inp) return;
+  const sync = () => wrap.classList.toggle('on', inp.checked);
+  inp.addEventListener('change', sync);
+  sync();
+}
+bindSharedToggle('composeSharedToggle', 'composeShared');
+bindSharedToggle('importSharedToggle', 'importShared');
+bindSharedToggle('importDedupToggle', 'importDedup');
+
+// Income не может быть совместным — прячем чекбокс в режиме доходов
+function syncComposeSharedVisibility() {
+  const t = document.getElementById('composeSharedToggle');
+  if (!t) return;
+  if (composeType === 'income') {
+    t.style.display = 'none';
+    document.getElementById('composeShared').checked = false;
+    t.classList.remove('on');
+  } else {
+    t.style.display = '';
+  }
+}
 
 function startEdit(tx) {
   editingId = tx.id;
@@ -1658,6 +2142,10 @@ function startEdit(tx) {
   }
   $('#category').value = tx.category;
   $('#date').value = tx.date;
+  const sh = $('#composeShared');
+  sh.checked = isShared(tx);
+  $('#composeSharedToggle').classList.toggle('on', sh.checked);
+  syncComposeSharedVisibility();
   $('#editBanner').classList.add('on');
   $('#editBannerText').textContent = `Редактирование: ${tx.name}`;
   $('#composeStamp').textContent = 'Edit';
@@ -1674,6 +2162,9 @@ function cancelEdit() {
   $$('.toggle button').forEach(b => b.classList.remove('active','expense','income'));
   document.querySelector('.toggle button[data-type="expense"]').classList.add('active','expense');
   paintCategorySelect();
+  $('#composeShared').checked = false;
+  $('#composeSharedToggle').classList.remove('on');
+  syncComposeSharedVisibility();
   $('#editBanner').classList.remove('on');
   $('#composeStamp').textContent = 'Compose';
   document.querySelector('#entryForm .submit').textContent = 'Внести в хронику';
@@ -1686,12 +2177,13 @@ $('#entryForm').addEventListener('submit', async (e) => {
   const amount = parseAmount($('#amount').value);
   const category = $('#category').value;
   const date = $('#date').value || todayISO();
+  const shared = composeType === 'expense' && $('#composeShared').checked ? 1 : 0;
   if (!name || !amount) { toast('Заполните название и сумму'); return; }
   try {
     if (editingId) {
       const updated = await api(`/api/transactions/${encodeURIComponent(editingId)}`, {
         method: 'PUT',
-        body: JSON.stringify({ type: composeType, name, category, amount, date })
+        body: JSON.stringify({ type: composeType, name, category, amount, date, shared })
       });
       const idx = state.transactions.findIndex(t => t.id === editingId);
       if (idx >= 0) state.transactions[idx] = updated;
@@ -1701,14 +2193,16 @@ $('#entryForm').addEventListener('submit', async (e) => {
     } else {
       const tx = await api('/api/transactions', {
         method: 'POST',
-        body: JSON.stringify({ type: composeType, name, category, amount, date })
+        body: JSON.stringify({ type: composeType, name, category, amount, date, shared })
       });
       state.transactions.unshift(tx);
       render();
       $('#name').value = '';
       $('#amount').value = '';
+      $('#composeShared').checked = false;
+      $('#composeSharedToggle').classList.remove('on');
       $('#name').focus();
-      toast(composeType === 'expense' ? 'Расход внесён' : 'Доход зачислен');
+      toast(shared ? 'Совместная запись внесена' : (composeType === 'expense' ? 'Расход внесён' : 'Доход зачислен'));
     }
   } catch { toast('Ошибка сервера'); }
 });
@@ -1722,13 +2216,20 @@ function render() {
   paintCatFilter();
   paintEntries();
   paintCategories();
+  paintJoint();
+  paintJointMonthSelect();
+  paintJointCatFilter();
+  paintJointEntries();
+  paintJointCategories();
+  paintJointSubcats();
+  paintJointProducts();
 }
 
 function getFilteredTx() {
   const now = new Date();
   const f = state.filter;
   const q = (f.q || '').trim().toLowerCase();
-  return state.transactions.filter(t => {
+  return personalTxAll().filter(t => {
     if (f.period === 'month' && !sameMonth(t.date, now)) return false;
     if (f.period === 'year') {
       const d = new Date(t.date + 'T00:00:00');
@@ -1743,9 +2244,197 @@ function getFilteredTx() {
   });
 }
 
+function currentMonthKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function jointPeriodFilter(t, f, now) {
+  if (f.period === 'month') {
+    const mk = f.monthKey || currentMonthKey(now);
+    if (t.date.slice(0, 7) !== mk) return false;
+  }
+  if (f.period === 'year') {
+    const d = new Date(t.date + 'T00:00:00');
+    if (d.getFullYear() !== now.getFullYear()) return false;
+  }
+  return true;
+}
+
+function getFilteredJointTx() {
+  const now = new Date();
+  const f = state.jointFilter;
+  const q = (f.q || '').trim().toLowerCase();
+  return sharedTxAll().filter(t => {
+    if (t.type !== 'expense') return false;
+    if (!jointPeriodFilter(t, f, now)) return false;
+    if (f.category && t.category !== f.category) return false;
+    if (q) {
+      const hay = (t.name + ' ' + t.category + ' ' + (t.note || '')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function stemName(name) {
+  const raw = String(name || '').toLowerCase().trim();
+  if (!raw) return '?';
+  const tokens = raw.split(/[\s,;.\/\\(\)\[\]"'«»]+/).filter(Boolean);
+  const word = tokens.find(t => t.length >= 3 && !/^[\d.,%]+$/.test(t));
+  return (word || tokens[0] || '?').slice(0, 40);
+}
+
+// ── Food subcategory dictionary ──
+const FOOD_SUBCATS = [
+  ['Мясо и птица',     /\b(куриц|курин|тушка|грудк|голен|окорочк|филе(?!\s+миньон)|фарш|говядин|свинин|телятин|баранин|индейк|утк|свин|колбас|сосиск|сардельк|шпикач|ветчин|бекон|карбонад|корейк|пельмен|варен(?:ик)|сал[ья]м|шашл)/i],
+  ['Рыба и морепродукты', /\b(рыб|лосос|с[её]мг|треск|тунец|форель|горбуш|минтай|скумбри|сельд|с[её]лед|мойв|икра|креветк|кальмар|мидии|осьминог|краб|краб[ао])/i],
+  ['Сыры',             /\b(сыр|моцарелл|маскарпон|чеддер|гауд|фет|бри(\b|\s)|камамбер|рикотт|пармезан|сулугун|брынз|косичк|косу|косы|косичка)/i],
+  ['Молочка',          /\b(молок|кефир|ряженк|йогурт|сметан|творог|простокваш|сливк|сывор[ао]тк|айран|кумыс|тан\b|масло\s+сливочн|маслице)/i],
+  ['Хлеб и выпечка',   /\b(хлеб|батон|лаваш|лепешк|лепёшк|тортильи|дрожж|булочк|круассан|багет|пирожок|пирожк|ватруш|сушк|бубл|сухарь|сухарик)/i],
+  ['Овощи и зелень',   /\b(картофел|картошк|морков|томат|помидор|огурец|огурц|лук(\b|и)|чеснок|перец|капуст|баклажан|кабачок|шампиньон|грибы|опят|лисичк|свекл|редис|редьк|тыкв|петрушк|укроп|базилик|кинза|салат|шпинат|руккол|сельдер|имбир)/i],
+  ['Фрукты и ягоды',   /\b(банан|яблок|груш|апельсин|мандарин|лимон|лайм|ананас|виноград|кив[иe]|манго|авокадо|гранат|арбуз|дын[ья]|клубник|малин|черник|голубик|вишн|черешн|смородин|облепих|клюкв|брусник|папай|персик|нектарин|абрикос|сливы|финик|инжир|изюм)/i],
+  ['Снеки',            /\b(чипс|снек|попкорн|сухарик|орех|миндал|кешью|фундук|арахис|кукурузн.+(чипс|снек|палочк))/i],
+  ['Сладкое',          /\b(морожен|пломбир|эскимо|шоколад|конфет|зефир|мармелад|печень|вафл|торт|пирожн|халв|рахат|варен|джем|мёд|мед\b|нутелл|пастил|драже|карамел)/i],
+  ['Напитки',          /\b(вод(а|ы|у|е|ой|ам)|кола|пепс|спрайт|фант|сок|морс|квас|лимонад|газир|нектар|напиток|дюшес|тархун|пиво|вино|шампанск|коньяк|виски|водк|джин|ликер|ликёр|ситро|боржом|нарзан)/i],
+  ['Соусы и приправы', /\b(майонез|кетчуп|соус|паста\s+томат|горчиц|аджик|уксус|маслo\s+растительн|подсолнечн|оливков|солью|сахар|специ|приправ|корица|корич|перец\s+молот|тимьян|базилик\s+сух|карри|зира|паприк|кубики\s+бульон)/i],
+  ['Бакалея и крупы',  /\b(рис(\b|а|ом|у)|гречк|макарон|спагетти|мука|крахмал|овсянк|крупа|хлопь[яеи]|мюсли|каша|пшен|кускус|булгур|чечевиц|нут|фасол|горох|лапш(а|у|и)|вермишел|основа\s+д\W*супа|бульон)/i],
+  ['Консервы',         /\b(оливк|маслин|тунец\s+конс|шпрот|сардин|кукуруза\s+конс|горошек\s+конс|фасоль\s+конс|ананас\s+(в|кольца)|фрукты\s+конс)/i],
+  ['Яйца',             /\b(яйц[оаеу]|яиц|перепелин)/i],
+  ['Кофе и чай',       /\b(кофе|capуччин|капучин|латте|эспрессо|какао|чай(\b|ом|я|ная|ный))/i],
+  ['Заморозка и готовое', /\b(пельмен|вареник|блинч|чебурек|котлет|нагетс|бургер|пицц|равиол|хинкал|манты|самс|курин.+(зал|стрипс)|готов)/i]
+];
+
+function foodSubcat(name, vat) {
+  const s = String(name || '').toLowerCase();
+  if (!s) return null;
+  for (const [label, re] of FOOD_SUBCATS) {
+    if (re.test(s)) return label;
+  }
+  if (vat === 22) return 'Дополнительное';
+  return 'Прочее';
+}
+
+function entryMeta(t) {
+  const parts = [escapeHtml(t.category || 'Другое')];
+  if (t.shop) parts.push(`<span class="meta-shop">${escapeHtml(t.shop)}</span>`);
+  if (t.qty != null && t.unit && t.amount > 0 && t.qty > 0) {
+    const per = t.amount / t.qty;
+    const qtyStr = (Math.abs(t.qty - Math.round(t.qty)) > 0.005 ? t.qty.toFixed(3).replace(/\.?0+$/, '') : String(Math.round(t.qty)));
+    parts.push(`${qtyStr} ${escapeHtml(t.unit)} · ${fmtRub.format(per)}/${escapeHtml(t.unit)}`);
+  }
+  if (t.vat != null) parts.push(`НДС ${t.vat}%`);
+  return parts.join(' · ');
+}
+
+function autoCategorize(name) {
+  const s = String(name || '').toLowerCase();
+  if (/\b(пакет|сборка\s+заказа|доставк|пошлин|комисси|услуг)/i.test(s)) return 'Другое';
+  if (/\b(батарейк|лампочк|губк|порошок|шампун|мыло|туалетн|зубн|памперс|подгузник|салфетк|пакет|плёнк|плен|фольг|свеч)/i.test(s)) return 'Другое';
+  if (/\b(сигарет|табак|стик)/i.test(s)) return 'Сигареты';
+  if (/\b(метро|такси|бензин|дт\b|азс|транспорт|проезд|трамвай|автобус|маршрутк)/i.test(s)) return 'Транспорт';
+  if (/\b(аптек|таблетк|витамин|лекарств|пластыр|бинт|мазь)/i.test(s)) return 'Здоровье';
+  return 'Еда';
+}
+
+// ── OFD URL import ──
+async function fetchOfd(url) {
+  return await api('/api/ofd/fetch', { method: 'POST', body: JSON.stringify({ url }) });
+}
+
+// QR с бумажного чека приходит строкой вида
+//   t=20260423T1029&s=3052.15&fn=7380440902673253&i=83132&fp=166873285&n=1
+// преобразуем её в URL вида https://check.ofd.ru/rec/{fn}/{i}/{fp}
+function ofdUrlFromInput(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) return s;
+  // Heuristic: looks like fiscal QR query
+  if (!/(?:^|[?&])fn=/i.test(s) || !/(?:^|[?&])i=/i.test(s) || !/(?:^|[?&])fp=/i.test(s)) return null;
+  let qs = s;
+  const qIdx = qs.indexOf('?');
+  if (qIdx >= 0) qs = qs.slice(qIdx + 1);
+  const params = new URLSearchParams(qs);
+  const fn = params.get('fn');
+  const i  = params.get('i');
+  const fp = params.get('fp');
+  if (!fn || !i || !fp) return null;
+  return `https://check.ofd.ru/rec/${encodeURIComponent(fn)}/${encodeURIComponent(i)}/${encodeURIComponent(fp)}`;
+}
+
+(function bindOfd() {
+  const inp = document.getElementById('ofdUrl');
+  const btn = document.getElementById('ofdGo');
+  const prev = document.getElementById('ofdPreview');
+  if (!inp || !btn || !prev) return;
+
+  function showPreview(html, kind = '') {
+    prev.classList.add('on');
+    prev.innerHTML = html;
+    prev.classList.toggle('err', kind === 'err');
+  }
+
+  async function go() {
+    const raw = inp.value.trim();
+    if (!raw) { showPreview('<span class="err">Введите ссылку или строку из QR</span>', 'err'); return; }
+    const url = ofdUrlFromInput(raw);
+    if (!url) {
+      showPreview('<span class="err">Не похоже на ссылку OFD или QR-строку. Ожидается URL вида https://check.ofd.ru/rec/... или строка с QR (t=…&fn=…&i=…&fp=…&n=…)</span>', 'err');
+      return;
+    }
+    btn.disabled = true;
+    const wasQr = url !== raw;
+    showPreview(`<span class="meta">${wasQr ? 'QR распознан · ' : ''}загружаю чек…</span>`);
+    try {
+      const r = await fetchOfd(url);
+      const items = (r.items || []).map(it => {
+        const name = it.name;
+        const cat = autoCategorize(name);
+        const obj = {
+          name,
+          amount: it.amount,
+          category: cat,
+          type: 'expense'
+        };
+        if (r.date) obj.date = r.date;
+        if (r.shop) obj.shop = r.shop;
+        if (r.fpd) obj.receipt_id = r.fpd;
+        if (it.qty != null) obj.qty = it.qty;
+        if (it.unit) obj.unit = it.unit;
+        if (it.vat != null) obj.vat = it.vat;
+        return obj;
+      });
+      $('#importText').value = JSON.stringify(items, null, 2);
+      const totalSum = items.reduce((a, b) => a + (b.amount || 0), 0);
+      const dateStr = r.date ? r.date.split('-').reverse().join('.') : '—';
+      const shopStr = r.shop ? `<b>${escapeHtml(r.shop)}</b> · ` : '';
+      let info = `${shopStr}${dateStr} · позиций <b>${items.length}</b> · сумма <b>${fmtRub.format(totalSum)}</b>`;
+      if (r.total != null && Math.abs(r.total - totalSum) > 0.5) {
+        info += `<div class="meta">⚠ итог чека ${fmtRub.format(r.total)} расходится с суммой позиций</div>`;
+      } else {
+        info += `<div class="meta">JSON подставлен ниже — нажмите «Импортировать»</div>`;
+      }
+      showPreview(info);
+      setStatus('Чек загружен, проверьте и нажмите «Импортировать»', 'ok');
+    } catch (e) {
+      const msg = String(e?.message || e);
+      const m = msg.match(/\d{3}\s+(\{.*\})/);
+      let display = msg;
+      if (m) {
+        try { display = JSON.parse(m[1]).error || msg; } catch {}
+      }
+      showPreview(`<span class="err">Не удалось: ${escapeHtml(display)}</span>`, 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener('click', go);
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+})();
+
 function paintBalance() {
   const now = new Date();
-  const monthTx = state.transactions.filter(t => sameMonth(t.date, now));
+  const monthTx = personalTxAll().filter(t => sameMonth(t.date, now));
   const income  = monthTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
   const expense = monthTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
   const balance = income - expense;
@@ -1831,7 +2520,7 @@ function paintEntries() {
             <span class="dot"></span>
             <div class="body">
               <div class="name">${escapeHtml(t.name)}</div>
-              <div class="meta">${escapeHtml(t.category)}</div>
+              <div class="meta">${entryMeta(t)}</div>
             </div>
             <div class="amount">${t.type === 'expense' ? '−' : '+'} ${fmtRub.format(t.amount)}</div>
             <button class="del" title="Удалить" aria-label="Удалить запись">удалить</button>
@@ -1872,7 +2561,7 @@ function paintTrend() {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     months6.push({ year: d.getFullYear(), month: d.getMonth(), key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, expense: 0, income: 0 });
   }
-  for (const t of state.transactions) {
+  for (const t of personalTxAll()) {
     const k = t.date.slice(0, 7);
     const slot = months6.find(m => m.key === k);
     if (!slot) continue;
@@ -1909,7 +2598,7 @@ function paintCatFilter() {
   const wrap = $('#catFilter');
   const now = new Date();
   const f = state.filter;
-  const periodTx = state.transactions.filter(t => {
+  const periodTx = personalTxAll().filter(t => {
     if (f.period === 'month' && !sameMonth(t.date, now)) return false;
     if (f.period === 'year') {
       const d = new Date(t.date + 'T00:00:00');
@@ -1936,7 +2625,7 @@ function paintCatFilter() {
 
 function paintCategories() {
   const now = new Date();
-  const monthExp = state.transactions.filter(t => t.type === 'expense' && sameMonth(t.date, now));
+  const monthExp = personalTxAll().filter(t => t.type === 'expense' && sameMonth(t.date, now));
   const totals = {};
   for (const t of monthExp) totals[t.category] = (totals[t.category] || 0) + t.amount;
   const arr = Object.entries(totals).sort((a,b) => b[1] - a[1]);
@@ -1953,6 +2642,306 @@ function paintCategories() {
       <div class="bar" style="--pct:${(amt / max * 100).toFixed(1)}%"></div>
     </div>
   `).join('');
+}
+
+// ── Joint (shared with partner) ──
+function jointPeriodLabel() {
+  const now = new Date();
+  const f = state.jointFilter;
+  if (f.period === 'month') {
+    const mk = f.monthKey || currentMonthKey(now);
+    const [y, m] = mk.split('-').map(Number);
+    return `${months[m - 1]} ${y}`;
+  }
+  if (f.period === 'year') return `${now.getFullYear()}`;
+  return 'всё время';
+}
+
+function paintJoint() {
+  const now = new Date();
+  const f = state.jointFilter;
+  const all = sharedTxAll().filter(t => t.type === 'expense');
+  const periodTx = all.filter(t => jointPeriodFilter(t, f, now));
+  const total = periodTx.reduce((a,b) => a + b.amount, 0);
+  const half = total / 2;
+  $('#jointTotal').textContent = fmtRub.format(total);
+  $('#jointMine').textContent  = fmtRub.format(half);
+  $('#jointHers').textContent  = fmtRub.format(half);
+  $('#jointTotalFoot').textContent = `записей: ${periodTx.length}`;
+  $('#jointStamp').textContent = `50 / 50 · ${jointPeriodLabel()}`;
+}
+
+function paintJointMonthSelect() {
+  const sel = $('#jointMonth');
+  const row = $('#jointMonthRow');
+  if (!sel || !row) return;
+  const all = sharedTxAll().filter(t => t.type === 'expense');
+  const monthSet = new Set(all.map(t => t.date.slice(0, 7)));
+  const cur = currentMonthKey();
+  monthSet.add(cur);
+  const list = [...monthSet].sort().reverse();
+  const f = state.jointFilter;
+  const active = f.monthKey || cur;
+  sel.innerHTML = list.map(mk => {
+    const [y, m] = mk.split('-').map(Number);
+    const label = `${months[m - 1]} ${y}` + (mk === cur ? ' · текущий' : '');
+    const sel = mk === active ? ' selected' : '';
+    return `<option value="${mk}"${sel}>${label}</option>`;
+  }).join('');
+  row.classList.toggle('disabled', f.period !== 'month');
+}
+
+function paintJointCatFilter() {
+  const wrap = $('#jointCatFilter');
+  if (!wrap) return;
+  const now = new Date();
+  const f = state.jointFilter;
+  const periodTx = sharedTxAll().filter(t => t.type === 'expense' && jointPeriodFilter(t, f, now));
+  const usedCats = new Set();
+  for (const t of periodTx) usedCats.add(t.category);
+  if (f.category && !usedCats.has(f.category)) state.jointFilter.category = '';
+  const cats = [...usedCats].sort();
+  if (!cats.length) { wrap.innerHTML = ''; return; }
+  const active = state.jointFilter.category;
+  wrap.innerHTML = `<button data-cat="" class="${!active ? 'active' : ''}">Все</button>` +
+    cats.map(c => `<button data-cat="${escapeHtml(c)}" class="${active === c ? 'active' : ''}">${escapeHtml(c)}</button>`).join('');
+  wrap.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.jointFilter.category = btn.dataset.cat;
+      paintJointCatFilter();
+      paintJointEntries();
+      paintJointSubcats();
+      paintJointProducts();
+    });
+  });
+}
+
+function paintJointProducts() {
+  const list = $('#jointProductsList');
+  const sub = $('#jointProductsSub');
+  if (!list || !sub) return;
+  const items = getFilteredJointTx();
+  if (!items.length) {
+    sub.textContent = `${jointPeriodLabel()} · нет данных`;
+    list.innerHTML = '<div class="joint-empty" style="padding:18px 16px;">Совместных покупок за выбранный период нет.</div>';
+    return;
+  }
+  const groups = {};
+  for (const t of items) {
+    const key = stemName(t.name);
+    if (!groups[key]) groups[key] = { key, total: 0, count: 0, names: new Map() };
+    groups[key].total += t.amount;
+    groups[key].count++;
+    groups[key].names.set(t.name, (groups[key].names.get(t.name) || 0) + 1);
+  }
+  const arr = Object.values(groups).sort((a,b) => b.total - a.total);
+  const max = arr[0].total || 1;
+  const totalAll = arr.reduce((a,b) => a + b.total, 0);
+  sub.textContent = `${jointPeriodLabel()} · ${arr.length} ${arr.length === 1 ? 'продукт' : arr.length < 5 ? 'продукта' : 'продуктов'} · ${fmtRub.format(totalAll)}`;
+  list.innerHTML = arr.map(g => {
+    const variants = [...g.names.entries()];
+    const variantStr = variants.length > 1
+      ? variants.map(([n, c]) => c > 1 ? `${n} ×${c}` : n).join(' · ')
+      : (variants[0][1] > 1 ? `${variants[0][0]} ×${variants[0][1]}` : '');
+    const variantsHtml = variantStr ? `<div class="variants">${escapeHtml(variantStr)}</div>` : '';
+    const purchases = `${g.count} ${g.count === 1 ? 'покупка' : g.count < 5 ? 'покупки' : 'покупок'}`;
+    return `
+      <div class="product-row" style="--pct:${(g.total / max * 100).toFixed(1)}%">
+        <div>
+          <div class="name">${escapeHtml(g.key)}</div>
+          <div class="meta"><em>${purchases}</em></div>
+        </div>
+        <div>
+          <div class="total">${fmtRub.format(g.total)}</div>
+          <div class="half">моя ½ ${fmtRub.format(g.total / 2)}</div>
+        </div>
+        ${variantsHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function paintJointEntries() {
+  const list = [...getFilteredJointTx()].sort((a,b) => {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (b.ts || 0) - (a.ts || 0);
+  });
+  const container = $('#jointEntries');
+  if (!list.length) {
+    container.innerHTML = '<div class="joint-empty">Совместных трат за выбранный период пока нет. Поставьте галочку «Совместно с девушкой» при создании записи или импорте чека.</div>';
+    return;
+  }
+  const groupByReceipt = state.jointFilter.groupByReceipt;
+  const groups = {};
+  const order = [];
+  for (const t of list) {
+    let key, label;
+    if (groupByReceipt && t.receipt_id) {
+      key = `r:${t.receipt_id}`;
+      const shop = t.shop ? t.shop : 'Чек';
+      const heading = formatDayHeading(t.date);
+      label = `${shop} · ${heading.main}`;
+    } else {
+      key = `d:${t.date}`;
+      const heading = formatDayHeading(t.date);
+      label = `${heading.main} <em>${heading.rel}</em>`;
+    }
+    if (!groups[key]) { groups[key] = { items: [], label }; order.push(key); }
+    groups[key].items.push(t);
+  }
+
+  let html = '';
+  for (const key of order) {
+    const { items, label } = groups[key];
+    const dayTotal = items.reduce((a,b) => a + b.amount, 0);
+    const totalLine = `<b>− ${fmtRub.format(dayTotal)}</b> · моя ½ ${fmtRub.format(dayTotal / 2)}`;
+    html += `
+      <div class="day-group">
+        <div class="day-head">
+          <div class="date">${label}</div>
+          <div class="total">${totalLine}</div>
+        </div>
+        ${items.map(t => `
+          <div class="entry expense" data-id="${escapeHtml(t.id)}">
+            <span class="dot" style="background:var(--gilt)"></span>
+            <div class="body">
+              <div class="name">${escapeHtml(t.name)}</div>
+              <div class="meta">${entryMeta(t)} · моя ½ ${fmtRub.format(t.amount / 2)}</div>
+            </div>
+            <div class="amount">− ${fmtRub.format(t.amount)}</div>
+            <button class="del" title="Удалить" aria-label="Удалить запись">удалить</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+
+  container.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = e.target.closest('.entry').dataset.id;
+      try {
+        await api(`/api/transactions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        state.transactions = state.transactions.filter(t => t.id !== id);
+        render();
+        toast('Запись удалена');
+      } catch { toast('Ошибка удаления'); }
+    });
+  });
+  container.querySelectorAll('.entry').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.del')) return;
+      const id = el.dataset.id;
+      const tx = state.transactions.find(t => t.id === id);
+      if (tx) startEdit(tx);
+    });
+  });
+}
+
+function paintJointCategories() {
+  const now = new Date();
+  const f = state.jointFilter;
+  const periodTx = sharedTxAll().filter(t => t.type === 'expense' && jointPeriodFilter(t, f, now));
+  const totals = {};
+  for (const t of periodTx) totals[t.category] = (totals[t.category] || 0) + t.amount;
+  const arr = Object.entries(totals).sort((a,b) => b[1] - a[1]);
+  const max = arr.length ? arr[0][1] : 1;
+  const list = $('#jointCatsList');
+  if (!arr.length) {
+    list.innerHTML = '<div style="font-family:\'Instrument Serif\',serif;font-style:italic;color:var(--muted);font-size:16px;">Совместных трат пока нет.</div>';
+    return;
+  }
+  list.innerHTML = arr.map(([cat, amt]) => `
+    <div class="cat">
+      <span class="name">${escapeHtml(cat)}</span>
+      <span class="amt">${fmtRub.format(amt)} <em style="font-style:italic;color:var(--muted);font-family:'Instrument Serif',serif;font-size:.85em;">· моя ½ ${fmtRub.format(amt / 2)}</em></span>
+      <div class="bar" style="--pct:${(amt / max * 100).toFixed(1)}%"></div>
+    </div>
+  `).join('');
+}
+
+function paintJointSubcats() {
+  const list = $('#jointSubcatsList');
+  const sub = $('#jointSubcatsSub');
+  if (!list || !sub) return;
+  const items = getFilteredJointTx().filter(t => /\bеда\b/i.test(t.category));
+  if (!items.length) {
+    sub.textContent = `${jointPeriodLabel()} · нет данных по еде`;
+    list.innerHTML = '';
+    return;
+  }
+  const groups = {};
+  for (const t of items) {
+    const key = foodSubcat(t.name, t.vat) || 'Прочее';
+    groups[key] = (groups[key] || 0) + t.amount;
+  }
+  const arr = Object.entries(groups).sort((a,b) => b[1] - a[1]);
+  const max = arr[0][1] || 1;
+  const total = arr.reduce((a,b) => a + b[1], 0);
+  sub.textContent = `${jointPeriodLabel()} · ${arr.length} ${arr.length === 1 ? 'группа' : arr.length < 5 ? 'группы' : 'групп'} · ${fmtRub.format(total)}`;
+  list.innerHTML = arr.map(([cat, amt]) => `
+    <div class="cat">
+      <span class="name">${escapeHtml(cat)}</span>
+      <span class="amt">${fmtRub.format(amt)} <em style="font-style:italic;color:var(--muted);font-family:'Instrument Serif',serif;font-size:.85em;">· моя ½ ${fmtRub.format(amt / 2)}</em></span>
+      <div class="bar" style="--pct:${(amt / max * 100).toFixed(1)}%"></div>
+    </div>
+  `).join('');
+}
+
+// joint filter wiring
+let jointSearchTimer;
+const _jointSearchInput = document.getElementById('jointSearch');
+if (_jointSearchInput) {
+  _jointSearchInput.addEventListener('input', (e) => {
+    clearTimeout(jointSearchTimer);
+    const v = e.target.value;
+    jointSearchTimer = setTimeout(() => {
+      state.jointFilter.q = v;
+      paintJointEntries();
+      paintJointSubcats();
+      paintJointProducts();
+    }, 120);
+  });
+}
+document.querySelectorAll('#jointPeriodChips button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#jointPeriodChips button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.jointFilter.period = btn.dataset.period;
+    state.jointFilter.category = '';
+    if (btn.dataset.period !== 'month') state.jointFilter.monthKey = null;
+    paintJoint();
+    paintJointMonthSelect();
+    paintJointCatFilter();
+    paintJointEntries();
+    paintJointCategories();
+    paintJointSubcats();
+    paintJointProducts();
+  });
+});
+
+const _jointGroupReceipts = document.getElementById('jointGroupReceipts');
+if (_jointGroupReceipts) {
+  _jointGroupReceipts.addEventListener('change', (e) => {
+    state.jointFilter.groupByReceipt = e.target.checked;
+    paintJointEntries();
+  });
+}
+
+const _jointMonthSel = document.getElementById('jointMonth');
+if (_jointMonthSel) {
+  _jointMonthSel.addEventListener('change', (e) => {
+    const v = e.target.value;
+    state.jointFilter.monthKey = v || null;
+    state.jointFilter.category = '';
+    paintJoint();
+    paintJointCatFilter();
+    paintJointEntries();
+    paintJointCategories();
+    paintJointSubcats();
+    paintJointProducts();
+  });
 }
 
 // ── JSON Import ──
@@ -2026,27 +3015,84 @@ function setStatus(msg, kind = '') {
   el.className = 'import-status ' + kind;
 }
 
+function dupKey(name, amount, date) {
+  const n = String(name || '').trim().toLowerCase();
+  const a = Math.round((Number(amount) || 0) * 100);
+  return `${date || ''}|${n}|${a}`;
+}
+function existingKeys() {
+  const set = new Set();
+  for (const t of state.transactions) set.add(dupKey(t.name, t.amount, t.date));
+  return set;
+}
+function partitionDupes(items) {
+  const keys = existingKeys();
+  const seen = new Set();
+  const fresh = [];
+  const dupes = [];
+  for (const x of items) {
+    const date = parseDate(x.date) || todayISO();
+    const amt = parseFloat(String(x.amount ?? x.sum ?? 0).replace(/\s/g,'').replace(',','.')) || 0;
+    const k = dupKey(x.name, amt, date);
+    if (keys.has(k) || seen.has(k)) dupes.push(x);
+    else { fresh.push(x); seen.add(k); }
+  }
+  return { fresh, dupes };
+}
+function parseDate(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  let m;
+  if ((m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/))) return s;
+  if ((m = s.match(/^(\d{1,2})[.\/\-](\d{1,2})[.\/\-](\d{4})$/))) {
+    return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  }
+  return null;
+}
+
 $('#importPreview').addEventListener('click', () => {
   const r = tryParse($('#importText').value);
   if (!r.ok) return setStatus(r.msg, 'err');
   const total = r.items.reduce((a, x) => a + (parseFloat(String(x.amount ?? x.sum ?? 0).replace(/\s/g,'').replace(',','.')) || 0), 0);
+  const { dupes } = partitionDupes(r.items);
   const prefix = r.repaired ? 'JSON починен · ' : '';
-  setStatus(`${prefix}Найдено записей: ${r.items.length} · сумма ${fmtRub.format(total)}`, 'ok');
+  const dupNote = dupes.length ? ` · дубли: ${dupes.length}` : '';
+  setStatus(`${prefix}Найдено записей: ${r.items.length} · сумма ${fmtRub.format(total)}${dupNote}`, 'ok');
 });
 
 $('#importGo').addEventListener('click', async () => {
   const r = tryParse($('#importText').value);
   if (!r.ok) return setStatus(r.msg, 'err');
   setStatus('Отправка…');
+  const shared = $('#importShared').checked;
+  const skipDupes = $('#importDedup').checked;
+  let toSend = r.items;
+  let skipped = 0;
+  if (skipDupes) {
+    const { fresh, dupes } = partitionDupes(r.items);
+    toSend = fresh;
+    skipped = dupes.length;
+    if (!toSend.length) {
+      setStatus(`Все ${r.items.length} позиций — дубли, ничего не импортировано`, 'err');
+      return;
+    }
+  }
+  const payload = shared ? { items: toSend, shared: true } : toSend;
   try {
-    const res = await api('/api/transactions/bulk', { method: 'POST', body: JSON.stringify(r.items) });
+    const res = await api('/api/transactions/bulk', { method: 'POST', body: JSON.stringify(payload) });
     if (res.items?.length) state.transactions = [...res.items, ...state.transactions];
     render();
     let msg = `Внесено: ${res.inserted}`;
+    if (skipped) msg += ` · пропущено дублей: ${skipped}`;
+    if (shared) msg += ' · в раздел «Совместно»';
     if (res.rejected) msg += ` · отклонено: ${res.rejected}`;
     setStatus(msg, res.rejected ? 'err' : 'ok');
-    toast(`Импортировано: ${res.inserted}`);
-    if (!res.rejected) $('#importText').value = '';
+    toast(`Импортировано: ${res.inserted}${shared ? ' (совместно)' : ''}${skipped ? ` (дублей: ${skipped})` : ''}`);
+    if (!res.rejected) {
+      $('#importText').value = '';
+      $('#importShared').checked = false;
+      $('#importSharedToggle').classList.remove('on');
+    }
   } catch { setStatus('Ошибка сервера', 'err'); }
 });
 
@@ -2106,8 +3152,9 @@ function paintInsights() {
     return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
   };
 
-  const thisTx  = state.transactions.filter(t => sameMonthAs(t.date, now));
-  const prevTx  = state.transactions.filter(t => sameMonthAs(t.date, prevMonthDate));
+  const personal = personalTxAll();
+  const thisTx  = personal.filter(t => sameMonthAs(t.date, now));
+  const prevTx  = personal.filter(t => sameMonthAs(t.date, prevMonthDate));
   const thisExp = thisTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
   const prevExp = prevTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
   const thisInc = thisTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
@@ -2240,7 +3287,7 @@ $('#exportJson').addEventListener('click', () => {
 
 $('#exportCsv').addEventListener('click', () => {
   if (!state.transactions.length) { toast('Нет данных для экспорта'); return; }
-  const headers = ['id', 'type', 'name', 'category', 'amount', 'date', 'note'];
+  const headers = ['id', 'type', 'name', 'category', 'amount', 'date', 'note', 'shared', 'qty', 'unit', 'shop', 'vat', 'receipt_id'];
   const rows = [headers.join(',')];
   for (const t of state.transactions) {
     rows.push(headers.map(h => {
@@ -2251,6 +3298,87 @@ $('#exportCsv').addEventListener('click', () => {
   }
   downloadFile('﻿' + rows.join('\r\n'), `kapital-${todayISO()}.csv`, 'text/csv;charset=utf-8');
   toast('CSV скачан');
+});
+
+async function downloadServerBackup(path, fallbackName, errMsg) {
+  try {
+    const r = await fetch(path, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!r.ok) {
+      let msg = `${r.status}`;
+      try { const j = await r.json(); if (j?.error) msg = j.error; } catch {}
+      throw new Error(msg);
+    }
+    const blob = await r.blob();
+    const cd = r.headers.get('Content-Disposition') || '';
+    const m = cd.match(/filename="([^"]+)"/);
+    const fname = m ? m[1] : fallbackName;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Резервная копия скачана');
+  } catch (e) {
+    toast((errMsg || 'Не удалось скачать копию') + ': ' + e.message);
+  }
+}
+
+$('#backupDb').addEventListener('click', () => {
+  downloadServerBackup('/api/backup/db', `kapital-backup-${todayISO()}.db`, 'Не удалось скачать .db');
+});
+
+$('#backupJson').addEventListener('click', () => {
+  downloadServerBackup('/api/backup/json', `kapital-backup-${todayISO()}.json`, 'Не удалось скачать JSON');
+});
+
+$('#backupTopBtn').addEventListener('click', () => {
+  downloadServerBackup('/api/backup/json', `kapital-backup-${todayISO()}.json`, 'Не удалось скачать');
+});
+
+$('#restoreTopBtn').addEventListener('click', () => {
+  $('#restoreFile').click();
+});
+
+$('#restoreFile').addEventListener('change', async (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  e.target.value = '';
+  let data;
+  try {
+    const text = await f.text();
+    data = JSON.parse(text);
+  } catch (err) {
+    toast('Файл не похож на резервную копию JSON');
+    return;
+  }
+  const items = Array.isArray(data) ? data
+    : Array.isArray(data?.transactions) ? data.transactions
+    : Array.isArray(data?.items) ? data.items
+    : null;
+  if (!items) {
+    toast('В файле не найден массив транзакций');
+    return;
+  }
+  const okMsg = `Импорт базы из «${f.name}» — ${items.length} ${items.length === 1 ? 'запись' : items.length < 5 ? 'записи' : 'записей'}.\n\nЭто ПОЛНОСТЬЮ заменит все текущие данные. Продолжить?`;
+  if (!confirm(okMsg)) return;
+  try {
+    const r = await api('/api/backup/restore', {
+      method: 'POST',
+      body: JSON.stringify({
+        transactions: items,
+        settings: data?.settings && typeof data.settings === 'object' ? data.settings : undefined,
+        mode: 'replace'
+      })
+    });
+    state.transactions = await api('/api/transactions');
+    render();
+    let msg = `База восстановлена · ${r.inserted}`;
+    if (r.rejected) msg += ` · отклонено ${r.rejected}`;
+    if (r.settings) msg += ` · настроек ${r.settings}`;
+    toast(msg);
+  } catch (err) {
+    toast('Ошибка восстановления: ' + (err?.message || err));
+  }
 });
 
 // ── Boot ──
