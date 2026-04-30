@@ -608,11 +608,16 @@ app.post('/api/ofd/fetch', auth, async (req, res) => {
 
   const tried = [];
 
-  // ── Provider 1a: consumer.1-ofd.ru JSON API
+  // ── Provider 1a: consumer.1-ofd.ru — POST JSON API (Первый ОФД)
   try {
-    const url = `https://consumer.1-ofd.ru/api/v1/find-ticket?fn=${qr.fn}&ticket=${qr.i}&fiscalSign=${qr.fp}`;
-    const r = await safeFetch(url, {
-      headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 Kapital/1.0' }
+    const r = await safeFetch('https://consumer.1-ofd.ru/api/v1/find-ticket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 Kapital/1.0'
+      },
+      body: JSON.stringify({ fn: qr.fn, ticket: qr.i, fiscalSign: qr.fp })
     }, 10000);
     if (r.ok) {
       const json = await r.json();
@@ -624,6 +629,24 @@ app.post('/api/ofd/fetch', auth, async (req, res) => {
     }
   } catch (e) {
     tried.push(`1-ofd API: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+  }
+
+  // ── Provider 1c: lk.platformaofd.ru — публичный JSON без авторизации (Платформа ОФД)
+  try {
+    const url = `https://lk.platformaofd.ru/web/noauth/ticket?fn=${qr.fn}&fd=${qr.i}&fp=${qr.fp}`;
+    const r = await safeFetch(url, {
+      headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 Kapital/1.0' }
+    }, 10000);
+    if (r.ok) {
+      const json = await r.json();
+      const receipt = parseFirstOfd(json);
+      if (receipt.items?.length) return res.json(receipt);
+      tried.push('platformaofd: нет позиций');
+    } else {
+      tried.push(`platformaofd: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`platformaofd: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
   }
 
   // ── Provider 1b: consumer.1-ofd.ru HTML viewer
