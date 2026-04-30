@@ -258,6 +258,7 @@ app.put('/api/settings', auth, (req, res) => {
 const OFD_ALLOWED_HOSTS = new Set([
   'check.ofd.ru',
   'consumer.1-ofd.ru',
+  'ofd.kontur.ru',
   'lk.platformaofd.ru',
   'receipt.taxcom.ru',
   'ofd.beeline.ru',
@@ -364,6 +365,69 @@ function parseOfdRu(html) {
   if (fpdMatch) fpd = decodeHtmlText(fpdMatch[1]).slice(0, 40);
 
   return { shop, date, total, items, fpd };
+}
+
+function parseKonturOfd(html) {
+  // 1. Попытка найти JSON, встроенный в страницу (React/SPA)
+  const patterns = [
+    /window\.__INITIAL_STATE__\s*=\s*(\{[\s\S]+?\});\s*<\/script>/,
+    /window\.__STATE__\s*=\s*(\{[\s\S]+?\});\s*<\/script>/,
+    /<script[^>]+type="application\/json"[^>]*>([\s\S]+?)<\/script>/i
+  ];
+  for (const re of patterns) {
+    const m = html.match(re);
+    if (!m) continue;
+    try {
+      const obj = JSON.parse(m[1]);
+      // Ищем массив items / products на любой глубине
+      const find = (o, depth = 0) => {
+        if (depth > 6 || !o || typeof o !== 'object') return null;
+        if (Array.isArray(o) && o.length && o[0]?.name && (o[0]?.sum != null || o[0]?.price != null)) return o;
+        for (const v of Object.values(o)) { const r = find(v, depth + 1); if (r) return r; }
+        return null;
+      };
+      const rawItems = find(obj);
+      if (rawItems) {
+        const receipt = parseFirstOfd({ receipt: { items: rawItems } });
+        if (receipt.items.length) return receipt;
+      }
+    } catch {}
+  }
+
+  // 2. HTML-парсинг — Контур рисует чек как таблицу или div-блоки
+  const items = [];
+  // Вариант А: строки таблицы с классами product/item
+  const rowRe = /<tr[^>]*class="[^"]*(?:product|item|row)[^"]*"[^>]*>([\s\S]*?)<\/tr>/gi;
+  let m;
+  while ((m = rowRe.exec(html)) !== null) {
+    const cells = [...m[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(c => decodeHtmlText(c[1]));
+    if (cells.length < 2) continue;
+    const name = cells[0];
+    const amount = parseRuNumber(cells[cells.length - 1]);
+    if (name && amount > 0) items.push({ name, amount: Math.round(amount * 100) / 100, qty: null, unit: null, vat: null });
+  }
+  if (items.length) {
+    // Дата из HTML
+    let date = null;
+    const dm = html.match(/(\d{2})[.\-](\d{2})[.\-](\d{4})/);
+    if (dm) date = `${dm[3]}-${dm[2]}-${dm[1]}`;
+    return { shop: null, date, total: null, items };
+  }
+
+  // Вариант Б: div с классами name + sum/price
+  const blocks = html.split(/<div[^>]+class="[^"]*(?:item|product|receipt-row)[^"]*"[^>]*>/i);
+  for (let i = 1; i < blocks.length; i++) {
+    const b = blocks[i];
+    const nameM = b.match(/class="[^"]*name[^"]*"[^>]*>([^<]{2,80})</i);
+    const sumM  = b.match(/class="[^"]*(?:sum|total|price)[^"]*"[^>]*>([\d\s.,]+)</i);
+    if (!nameM || !sumM) continue;
+    const amount = parseRuNumber(sumM[1]);
+    if (amount > 0) items.push({ name: decodeHtmlText(nameM[1]), amount: Math.round(amount * 100) / 100, qty: null, unit: null, vat: null });
+  }
+  let date = null;
+  const dm2 = html.match(/(\d{2})[.\-](\d{2})[.\-](\d{4})/);
+  if (dm2) date = `${dm2[3]}-${dm2[2]}-${dm2[1]}`;
+  return { shop: null, date, total: null, items };
 }
 
 function parseTaxcom(html) {
@@ -521,7 +585,33 @@ app.post('/api/ofd/fetch', auth, async (req, res) => {
     tried.push(`1-ofd: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
   }
 
-  // ── Provider 2: check.ofd.ru HTML (ОФД.ру — Лента, Магнит и др.)
+  // ── Provider 2: ofd.kontur.ru (Контур.ОФД — Красное&Белое, Бристоль и др.)
+  try {
+    const url = `https://ofd.kontur.ru/check/fn/${qr.fn}/ffd/${qr.i}/fp/${qr.fp}`;
+    const r = await safeFetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html,application/json' }
+    }, 12000);
+    if (r.ok) {
+      const ct = r.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        const json = await r.json();
+        const receipt = parseFirstOfd(json);
+        if (receipt.items?.length) return res.json(receipt);
+        tried.push('kontur: JSON нет позиций');
+      } else {
+        const html = Buffer.from(await r.arrayBuffer()).toString('utf8');
+        const receipt = parseKonturOfd(html);
+        if (receipt.items?.length) return res.json(receipt);
+        tried.push('kontur: HTML нет позиций');
+      }
+    } else {
+      tried.push(`kontur: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`kontur: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+  }
+
+  // ── Provider 3: check.ofd.ru HTML (ОФД.ру — Лента, Магнит и др.)
   try {
     const url = `https://check.ofd.ru/rec/${qr.fn}/${qr.i}/${qr.fp}`;
     const r = await safeFetch(url, {
