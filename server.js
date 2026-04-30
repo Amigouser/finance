@@ -367,6 +367,47 @@ function parseOfdRu(html) {
   return { shop, date, total, items, fpd };
 }
 
+function extractJsonReceipt(html) {
+  // Универсальный поиск данных чека в script-тегах (React/Vue initial state)
+  const scriptRe = /<script[^>]*>([\s\S]{20,100000}?)<\/script>/gi;
+  let m;
+  while ((m = scriptRe.exec(html)) !== null) {
+    const src = m[1];
+    // Ищем массивы items / positions / products в JS-переменных
+    const arrRe = /(?:items|positions|products|товары|чек)\s*["']?\s*[=:]\s*(\[[\s\S]{10,20000}?\])\s*[,;}\]]/i;
+    const am = src.match(arrRe);
+    if (am) {
+      try {
+        const arr = JSON.parse(am[1]);
+        if (Array.isArray(arr) && arr.length && arr[0]?.name) {
+          const r = parseFirstOfd({ receipt: { items: arr } });
+          if (r.items.length) return r;
+        }
+      } catch {}
+    }
+    // Ищем JSON-объект с полем ticket или receipt
+    const objRe = /(?:window\.__[A-Z_]+__|__INITIAL_STATE__|__STATE__|initialState)\s*=\s*(\{[\s\S]{20,200000}\})\s*;/;
+    const om = src.match(objRe);
+    if (om) {
+      try {
+        const obj = JSON.parse(om[1]);
+        const findItems = (o, d = 0) => {
+          if (d > 7 || !o || typeof o !== 'object') return null;
+          if (Array.isArray(o) && o.length && o[0]?.name && (o[0]?.sum != null || o[0]?.price != null)) return o;
+          for (const v of Object.values(o)) { const r = findItems(v, d + 1); if (r) return r; }
+          return null;
+        };
+        const rawItems = findItems(obj);
+        if (rawItems) {
+          const r = parseFirstOfd({ receipt: { items: rawItems } });
+          if (r.items.length) return r;
+        }
+      } catch {}
+    }
+  }
+  return null;
+}
+
 function parseKonturOfd(html) {
   // 1. Попытка найти JSON, встроенный в страницу (React/SPA)
   const patterns = [
@@ -567,7 +608,7 @@ app.post('/api/ofd/fetch', auth, async (req, res) => {
 
   const tried = [];
 
-  // ── Provider 1: consumer.1-ofd.ru JSON API (Первый ОФД — Красное&Белое, Дикси и др.)
+  // ── Provider 1a: consumer.1-ofd.ru JSON API
   try {
     const url = `https://consumer.1-ofd.ru/api/v1/find-ticket?fn=${qr.fn}&ticket=${qr.i}&fiscalSign=${qr.fp}`;
     const r = await safeFetch(url, {
@@ -577,12 +618,31 @@ app.post('/api/ofd/fetch', auth, async (req, res) => {
       const json = await r.json();
       const receipt = parseFirstOfd(json);
       if (receipt.items?.length) return res.json(receipt);
-      tried.push('1-ofd: нет позиций');
+      tried.push('1-ofd API: нет позиций');
     } else {
-      tried.push(`1-ofd: HTTP ${r.status}`);
+      tried.push(`1-ofd API: HTTP ${r.status}`);
     }
   } catch (e) {
-    tried.push(`1-ofd: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+    tried.push(`1-ofd API: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+  }
+
+  // ── Provider 1b: consumer.1-ofd.ru HTML viewer
+  try {
+    const url = `https://consumer.1-ofd.ru/v1?fn=${qr.fn}&i=${qr.i}&fp=${qr.fp}&n=${qr.n}&t=${encodeURIComponent(qr.t)}&s=${qr.s}`;
+    const r = await safeFetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html' }
+    }, 12000);
+    if (r.ok) {
+      const html = Buffer.from(await r.arrayBuffer()).toString('utf8');
+      // Try embedded JSON first, then HTML parse
+      const receipt = extractJsonReceipt(html) || parseKonturOfd(html);
+      if (receipt?.items?.length) return res.json(receipt);
+      tried.push('1-ofd HTML: нет позиций');
+    } else {
+      tried.push(`1-ofd HTML: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`1-ofd HTML: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
   }
 
   // ── Provider 2: ofd.kontur.ru (Контур.ОФД — Красное&Белое, Бристоль и др.)

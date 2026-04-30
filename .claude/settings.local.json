@@ -5,7 +5,8 @@
       "Bash(node -e \"const fs = require\\('fs'\\); const html = fs.readFileSync\\('c:/Users/user/finance/index.html','utf8'\\); const scriptMatch = html.match\\(/<script>\\([\\\\s\\\\S]*?\\)<\\\\/script>/\\); try { new Function\\(scriptMatch[1]\\); console.log\\('JS OK'\\); } catch\\(e\\) { console.log\\('ERROR:', e.message\\); }\")",
       "Bash(node -e \"const fs = require\\('fs'\\); const html = fs.readFileSync\\('c:/Users/user/finance/index.html','utf8'\\); const m = html.match\\(/<script>\\([\\\\s\\\\S]*?\\)<\\\\/script>/\\); try { new Function\\(m[1]\\); console.log\\('JS OK'\\); } catch\\(e\\) { console.log\\('ERROR:', e.message\\); }\")",
       "Bash(node --input-type=module)",
-      "Bash(node -e \"import\\('file:///c:/Users/user/finance/server.js'\\).catch\\(e => { if \\(e.message.includes\\('ACCESS_TOKEN'\\)\\) { console.log\\('Syntax OK'\\); } else { console.log\\('ERROR:', e.message\\); } }\\)\")"
+      "Bash(node -e \"import\\('file:///c:/Users/user/finance/server.js'\\).catch\\(e => { if \\(e.message.includes\\('ACCESS_TOKEN'\\)\\) { console.log\\('Syntax OK'\\); } else { console.log\\('ERROR:', e.message\\); } }\\)\")",
+      "Bash(node -e \"import\\('file:///c:/Users/user/finance/server.js'\\).catch\\(e => { if \\(e.message.includes\\('ACCESS_TOKEN'\\)\\) console.log\\('Syntax OK'\\); else console.log\\('ERROR:', e.message\\); }\\)\")"
     ]
   }
 }

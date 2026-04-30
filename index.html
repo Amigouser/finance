@@ -2411,7 +2411,11 @@ function ofdUrlFromInput(raw) {
       const m = msg.match(/\d{3}\s+(\{.*\})/);
       let display = msg;
       if (m) {
-        try { display = JSON.parse(m[1]).error || msg; } catch {}
+        try {
+          const parsed = JSON.parse(m[1]);
+          display = parsed.error || msg;
+          if (parsed.tried?.length) display += ' · ' + parsed.tried.join(' / ');
+        } catch {}
       }
       showPreview(`<span class="err">Не удалось: ${escapeHtml(display)}</span>`, 'err');
     } finally {
