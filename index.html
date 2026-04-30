@@ -3314,11 +3314,11 @@ async function downloadServerBackup(path, fallbackName, errMsg) {
   }
 }
 
-$('#backupDb').addEventListener('click', () => {
+$('#backupDb')?.addEventListener('click', () => {
   downloadServerBackup('/api/backup/db', `kapital-backup-${todayISO()}.db`, 'Не удалось скачать .db');
 });
 
-$('#backupJson').addEventListener('click', () => {
+$('#backupJson')?.addEventListener('click', () => {
   downloadServerBackup('/api/backup/json', `kapital-backup-${todayISO()}.json`, 'Не удалось скачать JSON');
 });
 
