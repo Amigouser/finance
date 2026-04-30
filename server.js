@@ -259,7 +259,9 @@ const OFD_ALLOWED_HOSTS = new Set([
   'check.ofd.ru',
   'consumer.1-ofd.ru',
   'lk.platformaofd.ru',
-  'receipt.taxcom.ru'
+  'receipt.taxcom.ru',
+  'ofd.beeline.ru',
+  'ofd.yandex.ru'
 ]);
 
 function decodeHtmlText(s) {
@@ -364,51 +366,200 @@ function parseOfdRu(html) {
   return { shop, date, total, items, fpd };
 }
 
+function parseTaxcom(html) {
+  const items = [];
+  // Taxcom wraps items in <div class="item"> or <tr class="item-row">
+  const blocks = html.split(/<div[^>]+class="[^"]*(?:product|item-row|receipt-item)[^"]*"[^>]*>/i);
+  for (let i = 1; i < blocks.length; i++) {
+    const b = blocks[i];
+    const nameM = b.match(/<(?:span|div|td)[^>]*class="[^"]*name[^"]*"[^>]*>([^<]+)</i);
+    if (!nameM) continue;
+    const name = decodeHtmlText(nameM[1]);
+    const sumM  = b.match(/<(?:span|div|td)[^>]*class="[^"]*(?:sum|total|price)[^"]*"[^>]*>([\d\s.,]+)</i);
+    const total = sumM ? parseRuNumber(sumM[1]) : null;
+    if (name && total > 0) items.push({ name, amount: Math.round(total * 100) / 100, qty: null, unit: null, vat: null });
+  }
+
+  let shop = null, date = null;
+  const shopM = html.match(/class="[^"]*(?:org|seller|shop)[^"]*"[^>]*>([^<]{3,60})</i);
+  if (shopM) { const m = decodeHtmlText(shopM[1]).match(/["«»]([^"«»]+)["«»]/); shop = (m ? m[1] : decodeHtmlText(shopM[1])).slice(0, 40); }
+  const dateM = html.match(/(\d{2})[.\-](\d{2})[.\-](\d{2,4})/);
+  if (dateM) { let y = dateM[3]; if (y.length === 2) y = '20' + y; date = `${y}-${dateM[2]}-${dateM[1]}`; }
+  return { shop, date, total: null, items };
+}
+
+function parseFirstOfd(json) {
+  // consumer.1-ofd.ru: { ticket: { document: { receipt: { items: [...] } } } }
+  const doc = json?.ticket?.document?.receipt
+    ?? json?.document?.receipt
+    ?? json?.receipt
+    ?? json;
+
+  const rawItems = doc?.items ?? doc?.rows ?? [];
+  const items = [];
+
+  for (const item of rawItems) {
+    const name = String(item.name || item.text || '').trim();
+    if (!name) continue;
+    // prices in kopecks on 1-ofd, in rubles on some others
+    const likelyKopecks = (item.sum ?? item.price ?? 0) > 500 && Number.isInteger(item.sum);
+    const div = likelyKopecks ? 100 : 1;
+    const price  = item.price  != null ? item.price  / div : null;
+    const qty    = item.quantity != null ? Number(item.quantity) : 1;
+    const amount = item.sum     != null ? Math.round(item.sum / div * 100) / 100
+                 : price != null        ? Math.round(price * qty * 100) / 100
+                 : null;
+    if (!amount || amount <= 0) continue;
+    const rawUnit = item.measurementUnit ?? item.ndsUnit ?? item.unit ?? null;
+    const unit = rawUnit ? String(rawUnit).trim().toLowerCase().slice(0, 8) || null : null;
+    const vat  = item.nds != null ? Number(item.nds) : null;
+    items.push({ name, amount, qty: qty !== 1 ? qty : null, unit, vat });
+  }
+
+  let shop = null;
+  const shopRaw = doc?.user ?? doc?.retailPlace ?? doc?.orgName ?? '';
+  if (shopRaw) {
+    const m = String(shopRaw).match(/["«»""]([^"«»""]+)["«»""]/);
+    shop = (m ? m[1] : String(shopRaw)).trim().slice(0, 40);
+  }
+
+  let date = null;
+  const dt = doc?.dateTime ?? doc?.date;
+  if (dt) {
+    const d = new Date(typeof dt === 'number' ? dt * 1000 : dt);
+    if (!isNaN(d.getTime())) {
+      date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+  }
+
+  const totalRaw = doc?.totalSum ?? doc?.total ?? null;
+  const likelyK  = totalRaw != null && totalRaw > 1000 && Number.isInteger(totalRaw);
+  const total    = totalRaw != null ? totalRaw / (likelyK ? 100 : 1) : null;
+
+  return { shop, date, total, items };
+}
+
 const OFD_PARSERS = {
   'check.ofd.ru': parseOfdRu
 };
 
-app.post('/api/ofd/fetch', auth, async (req, res) => {
-  const url = req.body && typeof req.body.url === 'string' ? req.body.url.trim() : '';
-  if (!url) return res.status(400).json({ error: 'url required' });
-  let parsed;
-  try { parsed = new URL(url); } catch { return res.status(400).json({ error: 'invalid url' }); }
-  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-    return res.status(400).json({ error: 'http/https only' });
-  }
-  if (!OFD_ALLOWED_HOSTS.has(parsed.hostname)) {
-    return res.status(400).json({ error: `OFD provider not supported: ${parsed.hostname}` });
-  }
+// Parse raw QR fiscal params: t=...&s=...&fn=...&i=...&fp=...&n=...
+function parseQrParams(s) {
+  const qs = s.startsWith('?') ? s.slice(1) : s;
+  let p;
+  try { p = new URLSearchParams(qs); } catch { return null; }
+  const fn = p.get('fn'), i = p.get('i'), fp = p.get('fp');
+  if (!fn || !i || !fp) return null;
+  return { fn, i, fp, t: p.get('t') || '', s: p.get('s') || '', n: p.get('n') || '1' };
+}
 
-  let html;
+async function safeFetch(url, opts = {}, timeoutMs = 12000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 15000);
-    const r = await fetch(url, {
-      signal: ctrl.signal,
-      redirect: 'error',
-      headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html' }
-    });
+    const r = await fetch(url, { ...opts, signal: ctrl.signal });
     clearTimeout(t);
-    if (!r.ok) return res.status(502).json({ error: `OFD HTTP ${r.status}` });
-    const buf = Buffer.from(await r.arrayBuffer());
-    if (buf.length > 5 * 1024 * 1024) return res.status(413).json({ error: 'response too large' });
-    html = buf.toString('utf8');
+    return r;
   } catch (e) {
-    return res.status(502).json({ error: `OFD fetch failed: ${e.name === 'AbortError' ? 'timeout' : e.message}` });
+    clearTimeout(t);
+    throw e;
+  }
+}
+
+app.post('/api/ofd/fetch', auth, async (req, res) => {
+  // Accept both { url } (legacy) and { input } (raw QR string or URL)
+  const raw = (req.body?.input ?? req.body?.url ?? '').trim();
+  if (!raw) return res.status(400).json({ error: 'url or input required' });
+
+  const isUrl = /^https?:\/\//i.test(raw);
+  const qr = isUrl ? null : parseQrParams(raw);
+
+  // If it's a direct URL — use existing single-provider logic
+  if (isUrl) {
+    let parsed;
+    try { parsed = new URL(raw); } catch { return res.status(400).json({ error: 'invalid url' }); }
+    if (!OFD_ALLOWED_HOSTS.has(parsed.hostname)) {
+      return res.status(400).json({ error: `OFD provider not supported: ${parsed.hostname}` });
+    }
+    const parser = OFD_PARSERS[parsed.hostname];
+    if (!parser) return res.status(501).json({ error: 'parser not implemented for ' + parsed.hostname });
+    let html;
+    try {
+      const r = await safeFetch(raw, { headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html' } });
+      if (!r.ok) return res.status(502).json({ error: `OFD HTTP ${r.status}` });
+      const buf = Buffer.from(await r.arrayBuffer());
+      if (buf.length > 5 * 1024 * 1024) return res.status(413).json({ error: 'response too large' });
+      html = buf.toString('utf8');
+    } catch (e) {
+      return res.status(502).json({ error: `OFD fetch failed: ${e.name === 'AbortError' ? 'timeout' : e.message}` });
+    }
+    let receipt;
+    try { receipt = parser(html); } catch (e) { return res.status(500).json({ error: 'parse failed: ' + e.message }); }
+    if (!receipt.items?.length) return res.status(422).json({ error: 'no items found in receipt', receipt });
+    return res.json(receipt);
   }
 
-  const parser = OFD_PARSERS[parsed.hostname];
-  if (!parser) return res.status(501).json({ error: 'parser not implemented for ' + parsed.hostname });
+  if (!qr) return res.status(400).json({ error: 'не похоже на QR-строку чека (нужны fn, i, fp)' });
 
-  let receipt;
-  try { receipt = parser(html); }
-  catch (e) { return res.status(500).json({ error: 'parse failed: ' + e.message }); }
+  const tried = [];
 
-  if (!receipt.items || !receipt.items.length) {
-    return res.status(422).json({ error: 'no items found in receipt', receipt });
+  // ── Provider 1: consumer.1-ofd.ru JSON API (Первый ОФД — Красное&Белое, Дикси и др.)
+  try {
+    const url = `https://consumer.1-ofd.ru/api/v1/find-ticket?fn=${qr.fn}&ticket=${qr.i}&fiscalSign=${qr.fp}`;
+    const r = await safeFetch(url, {
+      headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 Kapital/1.0' }
+    }, 10000);
+    if (r.ok) {
+      const json = await r.json();
+      const receipt = parseFirstOfd(json);
+      if (receipt.items?.length) return res.json(receipt);
+      tried.push('1-ofd: нет позиций');
+    } else {
+      tried.push(`1-ofd: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`1-ofd: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
   }
-  res.json(receipt);
+
+  // ── Provider 2: check.ofd.ru HTML (ОФД.ру — Лента, Магнит и др.)
+  try {
+    const url = `https://check.ofd.ru/rec/${qr.fn}/${qr.i}/${qr.fp}`;
+    const r = await safeFetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html' }
+    }, 15000);
+    if (r.ok) {
+      const buf = Buffer.from(await r.arrayBuffer());
+      const html = buf.toString('utf8');
+      const receipt = parseOfdRu(html);
+      if (receipt.items?.length) return res.json(receipt);
+      tried.push('check.ofd.ru: нет позиций');
+    } else {
+      tried.push(`check.ofd.ru: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`check.ofd.ru: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+  }
+
+  // ── Provider 3: receipt.taxcom.ru (Такском — Пятёрочка, Перекрёсток и др.)
+  try {
+    const url = `https://receipt.taxcom.ru/v01/show?fp=${qr.fp}&s=${qr.s}`;
+    const r = await safeFetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 Kapital/1.0', 'Accept': 'text/html' }
+    }, 10000);
+    if (r.ok) {
+      const buf = Buffer.from(await r.arrayBuffer());
+      const html = buf.toString('utf8');
+      const receipt = parseTaxcom(html);
+      if (receipt.items?.length) return res.json(receipt);
+      tried.push('taxcom: нет позиций');
+    } else {
+      tried.push(`taxcom: HTTP ${r.status}`);
+    }
+  } catch (e) {
+    tried.push(`taxcom: ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+  }
+
+  return res.status(422).json({ error: 'no items found in receipt', tried });
 });
 
 // ── Full backup ──

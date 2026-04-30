@@ -2337,28 +2337,19 @@ function autoCategorize(name) {
 }
 
 // ── OFD URL import ──
-async function fetchOfd(url) {
-  return await api('/api/ofd/fetch', { method: 'POST', body: JSON.stringify({ url }) });
+async function fetchOfd(input) {
+  return await api('/api/ofd/fetch', { method: 'POST', body: JSON.stringify({ input }) });
 }
 
-// QR с бумажного чека приходит строкой вида
-//   t=20260423T1029&s=3052.15&fn=7380440902673253&i=83132&fp=166873285&n=1
-// преобразуем её в URL вида https://check.ofd.ru/rec/{fn}/{i}/{fp}
+// Валидирует ввод — возвращает строку для отправки на сервер или null
 function ofdUrlFromInput(raw) {
   const s = String(raw || '').trim();
   if (!s) return null;
+  // Прямая ссылка — отдаём как есть
   if (/^https?:\/\//i.test(s)) return s;
-  // Heuristic: looks like fiscal QR query
-  if (!/(?:^|[?&])fn=/i.test(s) || !/(?:^|[?&])i=/i.test(s) || !/(?:^|[?&])fp=/i.test(s)) return null;
-  let qs = s;
-  const qIdx = qs.indexOf('?');
-  if (qIdx >= 0) qs = qs.slice(qIdx + 1);
-  const params = new URLSearchParams(qs);
-  const fn = params.get('fn');
-  const i  = params.get('i');
-  const fp = params.get('fp');
-  if (!fn || !i || !fp) return null;
-  return `https://check.ofd.ru/rec/${encodeURIComponent(fn)}/${encodeURIComponent(i)}/${encodeURIComponent(fp)}`;
+  // Строка с QR-кода — сервер сам попробует все провайдеры (1-ofd, check.ofd.ru, taxcom)
+  if (/(?:^|[?&])fn=/i.test(s) && /(?:^|[?&])i=/i.test(s) && /(?:^|[?&])fp=/i.test(s)) return s;
+  return null;
 }
 
 (function bindOfd() {
