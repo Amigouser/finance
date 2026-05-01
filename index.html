@@ -1586,7 +1586,7 @@ footer .ornament::before {
 <header class="masthead">
   <div class="wrap">
     <div class="masthead-row">
-      <div class="masthead-meta" id="issueLabel">Том&nbsp;I · Выпуск&nbsp;—</div>
+      <div class="masthead-meta" id="issueLabel">Версия —</div>
       <h1 class="brand">Финанс<span class="yat">ы</span></h1>
       <div class="masthead-meta right" id="dateLabel">—</div>
     </div>
@@ -1909,6 +1909,8 @@ footer .ornament::before {
 (() => {
 'use strict';
 
+const APP_VERSION = 5;
+
 const TOKEN_KEY = 'kapital.token';
 const fmt = new Intl.NumberFormat('ru-RU');
 const fmtRubInt = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
@@ -2072,8 +2074,7 @@ function paintHeader() {
   const now = new Date();
   const dateStr = `${weekdays[now.getDay()]} · ${now.getDate()} ${monthsGen[now.getMonth()]} ${now.getFullYear()}`;
   $('#dateLabel').textContent = dateStr.toUpperCase();
-  const issueNum = (now.getFullYear() - 2025) * 12 + now.getMonth() + 1;
-  $('#issueLabel').innerHTML = `Том&nbsp;${toRoman(now.getFullYear() - 2025 + 1)} · Выпуск&nbsp;${toRoman(issueNum)}`;
+  $('#issueLabel').textContent = `Версия ${APP_VERSION}`;
   $('#monthLabel').textContent = `Месяц: ${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 
@@ -2670,8 +2671,7 @@ function paintJointMonthSelect() {
   const sel = $('#jointMonth');
   const row = $('#jointMonthRow');
   if (!sel || !row) return;
-  const all = sharedTxAll().filter(t => t.type === 'expense');
-  const monthSet = new Set(all.map(t => t.date.slice(0, 7)));
+  const monthSet = new Set(state.transactions.map(t => t.date.slice(0, 7)));
   const cur = currentMonthKey();
   monthSet.add(cur);
   const list = [...monthSet].sort().reverse();
