@@ -2430,10 +2430,13 @@ function ofdUrlFromInput(raw) {
 
 function paintBalance() {
   const now = new Date();
-  const monthTx = personalTxAll().filter(t => sameMonth(t.date, now));
-  const income  = monthTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
-  const expense = monthTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
-  const balance = income - expense;
+  const allTx   = personalTxAll();
+  const monthTx = allTx.filter(t => sameMonth(t.date, now));
+
+  // Главный баланс — накопленный за всё время (как банковский счёт)
+  const totalIncome  = allTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+  const totalExpense = allTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  const balance = totalIncome - totalExpense;
 
   $('#balanceAmount').classList.toggle('neg', balance < 0);
   const absBal = Math.abs(balance);
@@ -2441,31 +2444,41 @@ function paintBalance() {
     ? absBal.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : fmt.format(Math.round(absBal));
   $('#balanceValue').textContent = balStr + (balance < 0 ? ' —' : '');
+  $('#monthLabel').textContent = 'Общий баланс · все время';
 
-  $('#incomeValue').textContent  = fmtRub.format(income);
-  $('#expenseValue').textContent = fmtRub.format(expense);
+  // Статистика карточек — только текущий месяц
+  const monthIncome  = monthTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+  const monthExpense = monthTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  $('#incomeValue').textContent  = fmtRub.format(monthIncome);
+  $('#expenseValue').textContent = fmtRub.format(monthExpense);
   const expCount = monthTx.filter(t => t.type === 'expense').length;
   $('#expenseFoot').textContent = `записей: ${expCount}`;
-  $('#incomeFoot').textContent  = income ? `за ${months[now.getMonth()]}` : 'пока ничего не зачислено';
+  $('#incomeFoot').textContent  = monthIncome ? `за ${months[now.getMonth()]}` : 'пока ничего не зачислено';
 
   const day = now.getDate();
-  const avg = day > 0 ? expense / day : 0;
-  $('#avgValue').textContent = fmtRub.format(avg);
+  $('#avgValue').textContent = fmtRub.format(day > 0 ? monthExpense / day : 0);
 
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const series = new Array(daysInMonth).fill(0);
-  for (const t of monthTx) {
-    const idx = new Date(t.date + 'T00:00:00').getDate() - 1;
-    if (idx >= 0 && idx < daysInMonth) series[idx] += (t.type === 'income' ? t.amount : -t.amount);
+  // Спарклайн — накопленный баланс за последние 60 дней
+  const days = 60;
+  const series = new Array(days).fill(0);
+  const cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - days + 1); cutoff.setHours(0,0,0,0);
+  for (const t of allTx) {
+    const d = new Date(t.date + 'T00:00:00');
+    const idx = Math.round((d - cutoff) / 86400000);
+    if (idx >= 0 && idx < days) series[idx] += (t.type === 'income' ? t.amount : -t.amount);
   }
-  let cum = 0;
+  // Стартуем с баланса до периода спарклайна
+  const balanceBefore = allTx
+    .filter(t => new Date(t.date + 'T00:00:00') < cutoff)
+    .reduce((a,t) => a + (t.type === 'income' ? t.amount : -t.amount), 0);
+  let cum = balanceBefore;
   const cumSeries = series.map(v => (cum += v));
   const W = 300, H = 56;
-  const min = Math.min(0, ...cumSeries);
-  const max = Math.max(0, ...cumSeries);
+  const min = Math.min(...cumSeries);
+  const max = Math.max(...cumSeries);
   const range = (max - min) || 1;
   const pts = cumSeries.map((v, i) => {
-    const x = (i / Math.max(1, daysInMonth - 1)) * W;
+    const x = (i / Math.max(1, days - 1)) * W;
     const y = H - ((v - min) / range) * (H - 6) - 3;
     return [x, y];
   });
@@ -2473,7 +2486,7 @@ function paintBalance() {
   $('#sparkPath').setAttribute('d', path);
   $('#sparkFill').setAttribute('d', path + ` L${W},${H} L0,${H} Z`);
   $('#sparkPath').setAttribute('stroke', balance < 0 ? '#a8321f' : '#14233b');
-  $('#sparkLabel').textContent = `${months[now.getMonth()]} ${now.getFullYear()} · нарастающим итогом`;
+  $('#sparkLabel').textContent = `последние 60 дней · нарастающим итогом`;
 }
 
 function paintEntries() {
