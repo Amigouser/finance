@@ -1785,9 +1785,9 @@ footer .ornament::before {
         <input id="searchInput" type="search" placeholder="Поиск по названию или категории…" autocomplete="off" />
       </div>
       <div class="chips" id="periodChips" role="group" aria-label="Период">
-        <button type="button" data-period="month" class="active">Месяц</button>
+        <button type="button" data-period="month">Месяц</button>
         <button type="button" data-period="year">Год</button>
-        <button type="button" data-period="all">Всё время</button>
+        <button type="button" data-period="all" class="active">Всё время</button>
       </div>
     </div>
     <div class="cat-filter" id="catFilter"></div>
@@ -1930,7 +1930,7 @@ const $$ = (q) => document.querySelectorAll(q);
 const state = {
   transactions: [],
   ready: false,
-  filter: { q: '', period: 'month', category: '' },
+  filter: { q: '', period: 'all', category: '' },
   jointFilter: { q: '', period: 'month', category: '', monthKey: null, groupByReceipt: false }
 };
 let editingId = null;
