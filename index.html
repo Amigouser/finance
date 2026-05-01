@@ -2053,6 +2053,18 @@ function sameMonth(iso, ref) {
   const d = new Date(iso + 'T00:00:00');
   return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
 }
+// Billing period: 30th of prev month → 29th of current month (salary cycle)
+function billingStart(now) {
+  return now.getDate() >= 30
+    ? new Date(now.getFullYear(), now.getMonth(), 30)
+    : new Date(now.getFullYear(), now.getMonth() - 1, 30);
+}
+function inBillingPeriod(iso, now) {
+  const d = new Date(iso + 'T00:00:00');
+  const start = billingStart(now);
+  const end = new Date(start.getFullYear(), start.getMonth() + 1, 30); // exclusive
+  return d >= start && d < end;
+}
 function formatDayHeading(iso) {
   const d = new Date(iso + 'T00:00:00');
   const today = new Date(); today.setHours(0,0,0,0);
@@ -2431,7 +2443,7 @@ function ofdUrlFromInput(raw) {
 function paintBalance() {
   const now = new Date();
   const allTx   = personalTxAll();
-  const monthTx = allTx.filter(t => sameMonth(t.date, now));
+  const periodTx = allTx.filter(t => inBillingPeriod(t.date, now));
 
   // Главный баланс — накопленный за всё время (как банковский счёт)
   const totalIncome  = allTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
@@ -2446,17 +2458,19 @@ function paintBalance() {
   $('#balanceValue').textContent = balStr + (balance < 0 ? ' —' : '');
   $('#monthLabel').textContent = 'Общий баланс · все время';
 
-  // Статистика карточек — только текущий месяц
-  const monthIncome  = monthTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
-  const monthExpense = monthTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
-  $('#incomeValue').textContent  = fmtRub.format(monthIncome);
-  $('#expenseValue').textContent = fmtRub.format(monthExpense);
-  const expCount = monthTx.filter(t => t.type === 'expense').length;
+  // Статистика карточек — расчётный период (30-е прошлого месяца → 29-е текущего)
+  const start = billingStart(now);
+  const periodLabel = `${start.getDate()} ${monthsGen[start.getMonth()]} – ${now.getDate()} ${monthsGen[now.getMonth()]}`;
+  const periodIncome  = periodTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
+  const periodExpense = periodTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
+  $('#incomeValue').textContent  = fmtRub.format(periodIncome);
+  $('#expenseValue').textContent = fmtRub.format(periodExpense);
+  const expCount = periodTx.filter(t => t.type === 'expense').length;
   $('#expenseFoot').textContent = `записей: ${expCount}`;
-  $('#incomeFoot').textContent  = monthIncome ? `за ${months[now.getMonth()]}` : 'пока ничего не зачислено';
+  $('#incomeFoot').textContent  = periodIncome ? periodLabel : 'пока ничего не зачислено';
 
-  const day = now.getDate();
-  $('#avgValue').textContent = fmtRub.format(day > 0 ? monthExpense / day : 0);
+  const daysElapsed = Math.max(1, Math.round((now - start) / 86400000) + 1);
+  $('#avgValue').textContent = fmtRub.format(periodExpense / daysElapsed);
 
   // Спарклайн — накопленный баланс за последние 60 дней
   const days = 60;
@@ -2634,7 +2648,7 @@ function paintCatFilter() {
 
 function paintCategories() {
   const now = new Date();
-  const monthExp = personalTxAll().filter(t => t.type === 'expense' && sameMonth(t.date, now));
+  const monthExp = personalTxAll().filter(t => t.type === 'expense' && inBillingPeriod(t.date, now));
   const totals = {};
   for (const t of monthExp) totals[t.category] = (totals[t.category] || 0) + t.amount;
   const arr = Object.entries(totals).sort((a,b) => b[1] - a[1]);
@@ -3154,15 +3168,12 @@ function toast(msg) {
 // ── Insights ──
 function paintInsights() {
   const now = new Date();
-  const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const sameMonthAs = (iso, ref) => {
-    const d = new Date(iso + 'T00:00:00');
-    return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
-  };
+  const start = billingStart(now);
+  const prevPeriodRef = new Date(start.getTime() - 86400000); // a day before current period start
 
   const personal = personalTxAll();
-  const thisTx  = personal.filter(t => sameMonthAs(t.date, now));
-  const prevTx  = personal.filter(t => sameMonthAs(t.date, prevMonthDate));
+  const thisTx  = personal.filter(t => inBillingPeriod(t.date, now));
+  const prevTx  = personal.filter(t => inBillingPeriod(t.date, prevPeriodRef));
   const thisExp = thisTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
   const prevExp = prevTx.filter(t => t.type === 'expense').reduce((a,b) => a + b.amount, 0);
   const thisInc = thisTx.filter(t => t.type === 'income').reduce((a,b) => a + b.amount, 0);
